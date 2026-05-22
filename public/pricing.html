@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing - ResumeStudioX</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;600;700;800&display=swap');
+    .font-outfit { font-family: 'Outfit', sans-serif; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-white to-slate-100 min-h-screen antialiased font-sans">
+  <!-- Premium Glassmorphic Page Loader -->
+  <div id="page-loader" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-md transition-all duration-500 ease-out opacity-100">
+    <div class="relative flex items-center justify-center">
+      <div class="absolute w-24 h-24 bg-indigo-500/20 rounded-full blur-xl animate-pulse"></div>
+      <div class="w-16 h-16 border-4 border-slate-800 border-t-indigo-500 rounded-full animate-spin"></div>
+    </div>
+    <div class="mt-6 text-center">
+      <h3 class="text-sm font-black tracking-widest text-white uppercase font-outfit">ResumeStudio <span class="text-indigo-500">X</span></h3>
+      <p class="text-[10px] text-slate-400 font-mono mt-1 animate-pulse uppercase tracking-wider">Mounting Design Grid...</p>
+    </div>
+  </div>
+
+  <!-- Header / Navbar section (Matches your layout theme) -->
+  <header class="w-full h-20 flex items-center justify-between px-6 md:px-14 border-b border-slate-200/60 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="flex items-center gap-4">
+      
+    </div>
+    <a href="index.html" class="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition">
+      Back to Dashboard
+    </a>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-6 md:px-14 py-16 md:py-24 flex flex-col items-center">
+    
+    <!-- Hero Header -->
+    <div class="text-center max-w-3xl mb-16">
+      <span class="text-xs font-bold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full">
+        Simple, Transparent Pricing
+      </span>
+      <h1 class="text-4xl md:text-5xl font-black text-slate-800 tracking-tight mt-4 mb-6">
+        Build a standout resume without breaking the bank.
+      </h1>
+      <p class="text-lg text-slate-500 leading-relaxed">
+        Start for free and upgrade as you grow. Gain access to advanced tracking metrics, premium templates, and deep AI enhancements.
+      </p>
+    </div>
+
+    <!-- Pricing Grid Layout -->
+    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+      
+      <!-- Plan 1: Free -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition duration-300">
+        <div>
+          <h3 class="text-xl font-bold text-slate-800">Starter</h3>
+          <p class="text-sm text-slate-400 mt-1">Perfect for testing the waters.</p>
+          
+          <div class="mt-6 mb-6">
+            <span class="text-4xl font-extrabold text-slate-800">₹0</span>
+            <span class="text-sm font-semibold text-slate-400">/ forever</span>
+          </div>
+
+          <hr class="border-slate-100 my-6">
+
+          <!-- Features List -->
+          <ul class="space-y-4 text-sm text-slate-600">
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              1 Basic Resume Template
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Standard Web Download (PDF)
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Basic Layout Editor
+            </li>
+          </ul>
+        </div>
+
+        <button class="w-full mt-8 py-3 px-4 border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold rounded-xl text-sm transition duration-200">
+          Get Started
+        </button>
+      </div>
+
+      <!-- Plan 2: Pro (Highlighted Card) -->
+      <div class="bg-white border-2 border-indigo-600 rounded-2xl p-8 flex flex-col justify-between shadow-xl relative scale-100 md:scale-[1.03] z-10">
+        <!-- Floating Badge -->
+        <span class="absolute top-0 right-1/2 translate-x-1/2 -translate-y-1/2 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-1 rounded-full shadow-md">
+          Most Popular
+        </span>
+
+        <div>
+          <h3 class="text-xl font-bold text-slate-800">Pro Professional</h3>
+          <p class="text-sm text-indigo-600 font-medium mt-1">Accelerate your job hunt.</p>
+          
+          <div class="mt-6 mb-6">
+            <span class="text-4xl font-extrabold text-slate-800">₹499</span>
+            <span class="text-sm font-semibold text-slate-400">/ month</span>
+          </div>
+
+          <hr class="border-slate-100 my-6">
+
+          <!-- Features List -->
+          <ul class="space-y-4 text-sm text-slate-600">
+            <li class="flex items-center gap-3 font-medium text-slate-800">
+              <svg class="h-5 w-5 text-indigo-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Unlimited Resume Building
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-indigo-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Access to All Premium Templates
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-indigo-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              AI-Powered Summary & Bullet Optimizer
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-indigo-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              ATS Score & Keyword Checker
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-indigo-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Remove ResumeStudioX Watermarks
+            </li>
+          </ul>
+        </div>
+
+        <button class="w-full mt-8 py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-100 hover:shadow-lg hover:shadow-indigo-200 transition duration-200">
+          Upgrade to Pro
+        </button>
+      </div>
+
+      <!-- Plan 3: Agency / Custom -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition duration-300">
+        <div>
+          <h3 class="text-xl font-bold text-slate-800">Team / Coach</h3>
+          <p class="text-sm text-slate-400 mt-1">For placement teams & mentors.</p>
+          
+          <div class="mt-6 mb-6">
+            <span class="text-4xl font-extrabold text-slate-800">Custom</span>
+          </div>
+
+          <hr class="border-slate-100 my-6">
+
+          <!-- Features List -->
+          <ul class="space-y-4 text-sm text-slate-600">
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Everything in Pro Plan
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Multi-user Dashboard (Up to 10 Seats)
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Shared Custom Templates
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="h-5 w-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Dedicated Priority Email Support
+            </li>
+          </ul>
+        </div>
+
+        <button class="w-full mt-8 py-3 px-4 border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold rounded-xl text-sm transition duration-200">
+          Contact Sales
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Simple Bottom FAQ Note -->
+    <p class="text-sm text-slate-400 mt-16 text-center">
+      Have larger group needs? Drop a note to our support desk or explore custom enterprise integrations.
+    </p>
+  </main>
+
+  <footer class="py-8 text-center text-xs text-slate-400 border-t border-slate-200/50 bg-white">
+    &copy; 2026 ResumeStudioX. All rights reserved.
+  </footer>
+
+  <script>
+    // Hide loader on window mount completion
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("page-loader");
+      if (loader) {
+        loader.classList.add("opacity-0");
+        loader.classList.add("pointer-events-none");
+        setTimeout(() => loader.remove(), 500);
+      }
+    });
+  </script>
+</body>
+</html>

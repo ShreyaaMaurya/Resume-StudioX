@@ -1,0 +1,2541 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResumeStudio X | Elite Design Workstation</title>
+    <script>
+      // Verify login before mounting DOM nodes
+      (function () {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          window.location.href = "/login.html";
+        }
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            width: { a4: "210mm" },
+            minHeight: { a4: "297mm" },
+            colors: {
+              "brand-dark": "#0f172a",
+              "brand-slate": "#475569",
+              "brand-light": "#f8fafc",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap");
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      /* Typography selection classes */
+      .font-sans-inter {
+        font-family: "Inter", sans-serif !important;
+      }
+      .font-sans-outfit {
+        font-family: "Outfit", sans-serif !important;
+      }
+      .font-serif-times {
+        font-family: "Times New Roman", Times, serif !important;
+      }
+      .font-serif-georgia {
+        font-family: Georgia, serif !important;
+      }
+      .font-serif-playfair {
+        font-family: "Playfair Display", serif !important;
+      }
+      .font-mono-fira {
+        font-family: "Fira Code", monospace !important;
+      }
+
+      .fade-in {
+        animation: blockSnap 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      @keyframes blockSnap {
+        from {
+          opacity: 0;
+          transform: scale(0.98) translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      /* Custom canvas attributes synced with control bar */
+      #canvas-paper {
+        padding: var(--canvas-margin, 20mm);
+        font-size: var(--canvas-font-size, 11px);
+        transition: all 0.3s ease;
+      }
+
+      /* Heading accent colors bind */
+      .tmpl-walton .section-title,
+      .tmpl-walton-nophoto .section-title,
+      .tmpl-classic .section-title,
+      .tmpl-tech .section-title,
+      .tmpl-ats-modern .section-title,
+      .tmpl-ats-compact .section-title {
+        border-color: var(--theme-accent, #4f46e5) !important;
+        color: var(--theme-accent, #4f46e5) !important;
+      }
+
+      .tmpl-ats-executive .section-title {
+        border-left-color: var(--theme-accent, #4f46e5) !important;
+        color: #000 !important;
+      }
+
+      .tmpl-walton .skill-grid-layout div,
+      .tmpl-walton-nophoto .skill-grid-layout div {
+        background: transparent;
+        color: #334155;
+      }
+
+      /* Walton template default style updates */
+      .tmpl-walton .section-title,
+      .tmpl-walton-nophoto .section-title {
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 1.1em;
+        letter-spacing: 0.05em;
+        border-bottom: 2px solid var(--theme-accent, #4f46e5);
+        padding-bottom: 3px;
+        margin-bottom: 8px;
+        margin-top: 16px;
+      }
+
+      .tmpl-walton .skill-grid-layout,
+      .tmpl-walton-nophoto .skill-grid-layout {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        font-size: 0.95em;
+        border-top: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 8px 0;
+      }
+      .tmpl-walton-nophoto #avatar-wrapper {
+        display: none !important;
+      }
+      .tmpl-walton-nophoto #header-text-block {
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+
+      /* Classic template defaults */
+      .tmpl-classic .section-title {
+        border-bottom: 1.5px solid #cbd5e1;
+        font-weight: 700;
+        font-size: 1.05em;
+        text-transform: uppercase;
+        margin-top: 14px;
+        padding-bottom: 2px;
+      }
+      .tmpl-classic .skill-grid-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 0.95em;
+      }
+
+      /* Modern Technical Centered */
+      .tmpl-tech header {
+        text-align: center;
+      }
+      .tmpl-tech .skill-grid-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 0.95em;
+      }
+
+      /* ATS serif clean */
+      .tmpl-ats-clean {
+        font-family: "Times New Roman", Times, serif !important;
+        color: #000 !important;
+      }
+      .tmpl-ats-clean #paper-header {
+        display: block !important;
+        text-align: left;
+        border-bottom: 1.5px solid #000;
+        padding-bottom: 6px;
+        margin-bottom: 10px;
+      }
+      .tmpl-ats-clean #avatar-wrapper {
+        display: none !important;
+      }
+      .tmpl-ats-clean #header-text-block {
+        width: 100%;
+        max-width: 100%;
+      }
+      .tmpl-ats-clean #view-name {
+        font-size: 1.6em !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        color: #000 !important;
+      }
+      .tmpl-ats-clean .section-title {
+        font-size: 1em !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        border-bottom: 1px solid #000 !important;
+        margin-top: 12px !important;
+        margin-bottom: 5px !important;
+        color: #000 !important;
+      }
+      .tmpl-ats-clean .skill-grid-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 4px;
+        font-size: 0.95em;
+        color: #000;
+      }
+      .tmpl-ats-clean .skill-grid-layout div::after {
+        content: " • ";
+      }
+      .tmpl-ats-clean .skill-grid-layout div:last-child::after {
+        content: "";
+      }
+
+      /* ATS executive */
+      .tmpl-ats-executive {
+        font-family: Georgia, "Times New Roman", serif !important;
+        color: #000 !important;
+      }
+      .tmpl-ats-executive #paper-header {
+        display: block !important;
+        text-align: center;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #000;
+        margin-bottom: 10px;
+      }
+      .tmpl-ats-executive #avatar-wrapper {
+        display: none !important;
+      }
+      .tmpl-ats-executive #header-text-block {
+        width: 100%;
+        max-width: 100%;
+      }
+      .tmpl-ats-executive #view-name {
+        font-size: 1.8em !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        color: #000 !important;
+      }
+      .tmpl-ats-executive .section-title {
+        font-size: 1em !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        padding-left: 8px;
+        border-left: 3px solid var(--theme-accent, #4f46e5) !important;
+        border-bottom: none !important;
+        margin-top: 14px !important;
+        margin-bottom: 6px !important;
+      }
+      .tmpl-ats-executive .skill-grid-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+        font-size: 0.95em;
+      }
+
+      /* ATS Modern */
+      .tmpl-ats-modern {
+        color: #111 !important;
+      }
+      .tmpl-ats-modern #paper-header {
+        display: block !important;
+        background: #f1f5f9;
+        margin: calc(-1 * var(--canvas-margin, 20mm))
+          calc(-1 * var(--canvas-margin, 20mm)) 12px
+          calc(-1 * var(--canvas-margin, 20mm));
+        padding: 18px var(--canvas-margin, 20mm) 14px var(--canvas-margin, 20mm);
+        border-bottom: 3.5px solid var(--theme-accent, #4f46e5);
+      }
+      .tmpl-ats-modern #avatar-wrapper {
+        display: none !important;
+      }
+      .tmpl-ats-modern #header-text-block {
+        width: 100%;
+        max-width: 100%;
+      }
+      .tmpl-ats-modern #view-name {
+        font-size: 1.7em !important;
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        color: #0f172a !important;
+      }
+      .tmpl-ats-modern .section-title {
+        font-size: 0.95em !important;
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        color: var(--theme-accent, #4f46e5) !important;
+        border-bottom: 1.5px solid var(--theme-accent, #4f46e5) !important;
+        padding-bottom: 2px;
+        margin-top: 14px !important;
+        margin-bottom: 6px !important;
+      }
+      .tmpl-ats-modern .skill-grid-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 8px;
+        font-size: 0.9em;
+      }
+      .tmpl-ats-modern .skill-grid-layout div {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 3px;
+        padding: 1px 6px;
+      }
+
+      /* ATS Compact */
+      .tmpl-ats-compact {
+        color: #111 !important;
+      }
+      .tmpl-ats-compact #paper-header {
+        display: block !important;
+        text-align: left;
+        border-bottom: 2px solid var(--theme-accent, #4f46e5);
+        padding-bottom: 6px;
+        margin-bottom: 10px;
+      }
+      .tmpl-ats-compact #avatar-wrapper {
+        display: none !important;
+      }
+      .tmpl-ats-compact #header-text-block {
+        width: 100%;
+        max-width: 100%;
+      }
+      .tmpl-ats-compact #view-name {
+        font-size: 1.5em !important;
+        font-weight: 700 !important;
+        color: var(--theme-accent, #4f46e5) !important;
+        text-transform: uppercase;
+      }
+      .tmpl-ats-compact .section-title {
+        font-size: 0.9em !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        color: var(--theme-accent, #4f46e5) !important;
+        border-bottom: 1px solid var(--theme-accent, #4f46e5) !important;
+        padding-bottom: 1px;
+        margin-top: 12px !important;
+        margin-bottom: 5px !important;
+      }
+      .tmpl-ats-compact .skill-grid-layout {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3px 8px;
+        font-size: 0.88em;
+      }
+
+      /* Responsive workstation layout */
+      @media (max-width: 1280px) {
+        .workstation-sidebar {
+          width: 360px;
+          padding: 1.5rem;
+        }
+        .workstation-preview {
+          padding: 2rem;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .main-workspace {
+          flex-direction: column;
+        }
+        .workstation-sidebar {
+          width: 100%;
+          position: relative;
+          top: 0;
+          height: auto;
+        }
+        .workstation-preview {
+          height: auto;
+          min-height: auto;
+          padding: 1.5rem;
+        }
+        .workstation-actions {
+          position: static;
+          margin: 1rem auto 2rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding: 1rem !important;
+        }
+        header .max-w-7xl {
+          flex-direction: column !important;
+          gap: 1rem !important;
+        }
+        header .flex {
+          width: 100% !important;
+          justify-content: center !important;
+        }
+        #canvas-paper {
+          width: 100% !important;
+          min-height: auto !important;
+        }
+        #canvas-scale-container {
+          width: 100%;
+        }
+        #paper-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+        }
+        #header-text-block {
+          max-width: 100% !important;
+        }
+        .tmpl-walton .skill-grid-layout,
+        .tmpl-walton-nophoto .skill-grid-layout {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .workstation-actions {
+          width: 100% !important;
+          padding: 0 1rem !important;
+        }
+      }
+
+      @media (max-width: 640px) {
+        header {
+          padding: 0.75rem !important;
+        }
+        header .max-w-7xl {
+          flex-direction: column !important;
+          gap: 0.75rem !important;
+        }
+        header .flex {
+          flex-wrap: wrap !important;
+          width: 100% !important;
+          justify-content: center !important;
+          gap: 0.5rem !important;
+        }
+        header a {
+          padding: 0.75rem 1rem !important;
+          font-size: 0.75rem !important;
+        }
+        #canvas-paper {
+          padding: 14mm !important;
+          font-size: 10px !important;
+          width: 100% !important;
+        }
+        .workstation-actions {
+          width: calc(100% - 2rem) !important;
+          flex-direction: column;
+          gap: 0.75rem;
+          padding: 0 1rem !important;
+        }
+        .workstation-actions button {
+          width: 100%;
+          padding: 0.75rem !important;
+          font-size: 0.75rem !important;
+        }
+        .workstation-sidebar {
+          width: 100% !important;
+          padding: 1rem !important;
+        }
+        .workstation-preview {
+          width: 100% !important;
+          padding: 1rem !important;
+        }
+        main .max-w-7xl {
+          padding: 0 !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between overflow-x-hidden"
+  >
+    <!-- Premium Glassmorphic Page Loader -->
+    <div
+      id="page-loader"
+      class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-md transition-all duration-500 ease-out opacity-100"
+    >
+      <div class="relative flex items-center justify-center">
+        <div
+          class="absolute w-24 h-24 bg-indigo-500/20 rounded-full blur-xl animate-pulse"
+        ></div>
+        <div
+          class="w-16 h-16 border-4 border-slate-800 border-t-indigo-500 rounded-full animate-spin"
+        ></div>
+      </div>
+      <div class="mt-6 text-center">
+        <h3
+          class="text-sm font-black tracking-widest text-white uppercase font-outfit"
+        >
+          ResumeStudio <span class="text-indigo-500">X</span>
+        </h3>
+        <p
+          class="text-[10px] text-slate-400 font-mono mt-1 animate-pulse uppercase tracking-wider"
+        >
+          Mounting Design Grid...
+        </p>
+      </div>
+    </div>
+
+    <!-- Top Design Control Station Dashboard -->
+    <header
+      class="w-full bg-[#0d1220] border-b border-slate-800/80 px-6 py-4 z-40 sticky top-0 shadow-lg backdrop-blur-md bg-opacity-95"
+    >
+      <div
+        class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 font-sans text-xs"
+      >
+        <!-- Document Sync Status & Navigation -->
+        <div class="flex items-center gap-4">
+          <a
+            href="index.html"
+            class="flex items-center gap-1.5 px-3 py-1.5 bg-[#12192d] hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white rounded-xl transition duration-300 font-bold tracking-wide"
+          >
+            🏠 Home
+          </a>
+          <a
+            href="cover-letter.html"
+            class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-650/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 rounded-xl transition duration-300 font-bold tracking-wide"
+          >
+            ✉️ Cover Letter
+          </a>
+          <a
+            href="portfolio.html"
+            class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-650/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 rounded-xl transition duration-300 font-bold tracking-wide"
+          >
+            🌐 Portfolio Builder
+          </a>
+          <div class="w-px h-6 bg-slate-800"></div>
+          <div class="flex items-center gap-3">
+            <div
+              class="h-8 w-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-white text-sm"
+            >
+              R
+            </div>
+            <div>
+              <h2 class="font-extrabold text-sm tracking-tight text-white">
+                ResumeStudio X Workstation
+              </h2>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span
+                  id="sync-indicator-dot"
+                  class="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                ></span>
+                <span
+                  id="sync-indicator-text"
+                  class="text-[10px] font-bold text-slate-400 font-mono uppercase tracking-wider"
+                  >Cloud Connected</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout Controls -->
+        <div class="flex flex-wrap items-center gap-6">
+          <!-- Accent Swatches -->
+          <div
+            class="flex items-center gap-2 bg-[#12192d] px-3 py-1.5 rounded-xl border border-slate-800"
+          >
+            <span
+              class="font-bold text-[10px] text-slate-400 font-mono uppercase"
+              >ACCENT:</span
+            >
+            <div class="flex items-center gap-1.5">
+              <button
+                onclick="updateThemeAccent('#4f46e5')"
+                class="w-3.5 h-3.5 rounded-full bg-indigo-600 border border-slate-800 active:scale-90 transition cursor-pointer"
+              ></button>
+              <button
+                onclick="updateThemeAccent('#10b981')"
+                class="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-slate-800 active:scale-90 transition cursor-pointer"
+              ></button>
+              <button
+                onclick="updateThemeAccent('#e11d48')"
+                class="w-3.5 h-3.5 rounded-full bg-rose-600 border border-slate-800 active:scale-90 transition cursor-pointer"
+              ></button>
+              <button
+                onclick="updateThemeAccent('#d97706')"
+                class="w-3.5 h-3.5 rounded-full bg-amber-600 border border-slate-800 active:scale-90 transition cursor-pointer"
+              ></button>
+              <input
+                type="color"
+                id="accent-color-picker"
+                onchange="updateThemeAccent(this.value)"
+                class="w-4 h-4 rounded-full bg-transparent border-0 outline-none cursor-pointer select-none p-0"
+              />
+            </div>
+          </div>
+
+          <!-- Font Selector -->
+          <div
+            class="flex items-center gap-2 bg-[#12192d] px-3 py-1 rounded-xl border border-slate-800"
+          >
+            <span
+              class="font-bold text-[10px] text-slate-400 font-mono uppercase"
+              >FONT:</span
+            >
+            <select
+              id="canvas-font-selector"
+              onchange="updateThemeFont(this.value)"
+              class="bg-transparent border-0 outline-none font-bold text-slate-200 cursor-pointer pr-1"
+            >
+              <option
+                value="font-sans-inter"
+                class="bg-slate-900 text-slate-100"
+              >
+                Inter Sans
+              </option>
+              <option
+                value="font-sans-outfit"
+                class="bg-slate-900 text-slate-100"
+              >
+                Outfit Custom
+              </option>
+              <option
+                value="font-serif-times"
+                class="bg-slate-900 text-slate-100"
+              >
+                Times Serif
+              </option>
+              <option
+                value="font-serif-georgia"
+                class="bg-slate-900 text-slate-100"
+              >
+                Georgia Formal
+              </option>
+              <option
+                value="font-serif-playfair"
+                class="bg-slate-900 text-slate-100"
+              >
+                Playfair Bold
+              </option>
+              <option
+                value="font-mono-fira"
+                class="bg-slate-900 text-slate-100"
+              >
+                Fira Technical
+              </option>
+            </select>
+          </div>
+
+          <!-- Spacing Sliders -->
+          <div
+            class="flex items-center gap-4 bg-[#12192d] px-3 py-1.5 rounded-xl border border-slate-800 text-[10px]"
+          >
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-slate-400 font-mono uppercase"
+                >MARGINS:</span
+              >
+              <input
+                type="range"
+                min="10"
+                max="30"
+                value="20"
+                id="margin-slider"
+                oninput="updateThemeMargin(this.value)"
+                class="w-16 accent-indigo-500 bg-slate-800 rounded-lg cursor-pointer h-1"
+              />
+            </div>
+            <div class="w-px h-4 bg-slate-800"></div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-slate-400 font-mono uppercase"
+                >SCALE:</span
+              >
+              <input
+                type="range"
+                min="9"
+                max="15"
+                step="0.5"
+                value="11"
+                id="font-scale-slider"
+                oninput="updateThemeFontScale(this.value)"
+                class="w-16 accent-indigo-500 bg-slate-800 rounded-lg cursor-pointer h-1"
+              />
+            </div>
+          </div>
+
+          <!-- View Zoom -->
+          <div
+            class="flex items-center gap-2 bg-[#12192d] px-3 py-1.5 rounded-xl border border-slate-800 text-[10px]"
+          >
+            <span class="font-bold text-slate-400 font-mono uppercase"
+              >ZOOM:</span
+            >
+            <input
+              type="range"
+              min="70"
+              max="130"
+              value="95"
+              id="zoom-slider"
+              oninput="updateThemeZoom(this.value)"
+              class="w-20 accent-indigo-500 bg-slate-800 rounded-lg cursor-pointer h-1"
+            />
+            <span id="zoom-value" class="font-mono font-bold text-slate-200"
+              >95%</span
+            >
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div
+      class="main-workspace flex flex-1 w-full min-h-[calc(100vh-160px)] items-stretch relative"
+    >
+      <!-- Left Forms Sidebar -->
+      <aside
+        class="workstation-sidebar w-[430px] bg-[#090d16] border-r border-slate-900 p-6 flex flex-col overflow-y-auto space-y-6 h-[calc(100vh-80px)] sticky top-20 shadow-2xl shrink-0"
+      >
+        <!-- AI Blueprint Section -->
+        <div
+          class="bg-indigo-950/30 border border-indigo-500/20 rounded-2xl p-4 space-y-3.5 backdrop-blur-sm"
+        >
+          <div class="flex items-center justify-between text-indigo-400">
+            <div class="flex items-center gap-2">
+              <span class="text-sm">🤖</span>
+              <span
+                class="text-[10px] font-mono font-bold tracking-widest uppercase"
+                >AI Design Blueprint Generator</span
+              >
+            </div>
+            <!-- API Settings Button -->
+            <button
+              type="button"
+              onclick="toggleAPISettings()"
+              class="text-slate-400 hover:text-indigo-400 text-xs transition p-1 hover:bg-slate-900 rounded-lg cursor-pointer"
+              title="Configure AI API Keys"
+            >
+              ⚙️
+            </button>
+          </div>
+
+          <!-- API Settings Drawer (Hidden by default) -->
+          <div
+            id="api-settings-drawer"
+            class="hidden bg-slate-950/80 border border-slate-800 rounded-xl p-3 space-y-2.5 text-xs text-slate-300"
+          >
+            <div
+              class="flex justify-between items-center pb-1 border-b border-slate-850"
+            >
+              <span
+                class="font-bold text-[10px] text-indigo-400 font-mono uppercase"
+                >🔑 Custom API Keys</span
+              >
+              <span class="text-[9px] text-slate-500">Stored locally</span>
+            </div>
+            <div class="space-y-1.5">
+              <label class="block text-[9px] font-bold text-slate-400 uppercase"
+                >Gemini API Key</label
+              >
+              <div class="relative">
+                <input
+                  type="password"
+                  id="custom-gemini-key"
+                  placeholder="Enter Gemini Key..."
+                  class="w-full bg-slate-900 border border-slate-805 rounded-lg px-2.5 py-1.5 pr-8 text-[11px] text-slate-200 placeholder-slate-650 outline-none focus:border-indigo-500 transition"
+                />
+                <button
+                  type="button"
+                  onclick="toggleKeyVisibility('custom-gemini-key')"
+                  class="absolute right-2 top-2 text-slate-500 hover:text-slate-300"
+                >
+                  👁️
+                </button>
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <label class="block text-[9px] font-bold text-slate-400 uppercase"
+                >OpenAI API Key</label
+              >
+              <div class="relative">
+                <input
+                  type="password"
+                  id="custom-openai-key"
+                  placeholder="Enter OpenAI Key..."
+                  class="w-full bg-slate-900 border border-slate-805 rounded-lg px-2.5 py-1.5 pr-8 text-[11px] text-slate-200 placeholder-slate-650 outline-none focus:border-indigo-500 transition"
+                />
+                <button
+                  type="button"
+                  onclick="toggleKeyVisibility('custom-openai-key')"
+                  class="absolute right-2 top-2 text-slate-500 hover:text-slate-300"
+                >
+                  👁️
+                </button>
+              </div>
+            </div>
+            <button
+              type="button"
+              onclick="saveAPIEngineKeys()"
+              class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 hover:text-indigo-300 border border-indigo-500/20 font-bold text-[10px] py-1.5 rounded-lg transition active:scale-95 cursor-pointer"
+            >
+              Save Keys
+            </button>
+          </div>
+
+          <!-- TABS CONTAINER -->
+          <div class="flex border-b border-indigo-500/20 text-xs">
+            <button
+              type="button"
+              id="tab-prompt"
+              onclick="toggleAITab('prompt')"
+              class="flex-1 py-1.5 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition cursor-pointer"
+            >
+              Prompt Role
+            </button>
+            <button
+              type="button"
+              id="tab-photo"
+              onclick="toggleAITab('photo')"
+              class="flex-1 py-1.5 text-center font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition cursor-pointer"
+            >
+              Upload Photo
+            </button>
+            <button
+              type="button"
+              id="tab-pdf"
+              onclick="toggleAITab('pdf')"
+              class="flex-1 py-1.5 text-center font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition cursor-pointer"
+            >
+              Upload PDF
+            </button>
+          </div>
+
+          <!-- PROMPT ROLE VIEW -->
+          <div id="ai-view-prompt" class="space-y-2">
+            <input
+              type="text"
+              id="ai-input-title"
+              placeholder="e.g., Senior Full Stack Engineer"
+              class="w-full bg-slate-950/70 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-indigo-500 transition"
+            />
+          </div>
+
+          <!-- UPLOAD PHOTO VIEW -->
+          <div id="ai-view-photo" class="hidden space-y-2">
+            <div
+              id="ai-dropzone"
+              onclick="triggerAIPictureSelect()"
+              ondragover="handleAIDragOver(event)"
+              ondragleave="handleAIDragLeave(event)"
+              ondrop="handleAIDrop(event)"
+              class="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl p-4 text-center cursor-pointer hover:bg-indigo-950/10 transition flex flex-col items-center justify-center space-y-1.5"
+            >
+              <span class="text-xl">📸</span>
+              <span class="text-[10px] font-bold text-slate-300"
+                >Drag resume screenshot here</span
+              >
+              <span class="text-[9px] text-slate-500"
+                >Supports PNG, JPG (Max 4MB)</span
+              >
+              <span
+                id="ai-upload-filename"
+                class="text-[10px] text-indigo-400 font-semibold truncate max-w-full hidden"
+                >No file chosen</span
+              >
+            </div>
+            <input
+              type="file"
+              id="ai-image-file-input"
+              accept="image/*"
+              class="hidden"
+              onchange="handleAIPictureSelected(this)"
+            />
+          </div>
+
+          <!-- UPLOAD PDF VIEW -->
+          <div id="ai-view-pdf" class="hidden space-y-2">
+            <div
+              id="ai-pdf-dropzone"
+              onclick="triggerAIPdfSelect()"
+              ondragover="handleAIDragOverPdf(event)"
+              ondragleave="handleAIDragLeavePdf(event)"
+              ondrop="handleAIDropPdf(event)"
+              class="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl p-4 text-center cursor-pointer hover:bg-indigo-950/10 transition flex flex-col items-center justify-center space-y-1.5"
+            >
+              <span class="text-xl">📄</span>
+              <span class="text-[10px] font-bold text-slate-300"
+                >Drag PDF document here</span
+              >
+              <span class="text-[9px] text-slate-500"
+                >Supports PDF format (Max 4MB)</span
+              >
+              <span
+                id="ai-upload-pdf-filename"
+                class="text-[10px] text-indigo-400 font-semibold truncate max-w-full hidden"
+                >No file chosen</span
+              >
+            </div>
+            <input
+              type="file"
+              id="ai-pdf-file-input"
+              accept="application/pdf"
+              class="hidden"
+              onchange="handleAIPdfSelected(this)"
+            />
+          </div>
+
+          <!-- ACTION BUTTON -->
+          <button
+            type="button"
+            id="ai-dispatch-btn"
+            onclick="triggerResumeAIGeneration()"
+            class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-xs py-3 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span>Build Layout via AI</span>
+          </button>
+        </div>
+
+        <!-- ATS Keywords Suggestion Panel -->
+        <div
+          class="bg-emerald-950/10 border border-emerald-500/10 rounded-2xl p-4 space-y-3.5 backdrop-blur-sm"
+        >
+          <div class="flex items-center gap-2 text-emerald-400">
+            <span class="text-sm">🎯</span>
+            <span
+              class="text-[10px] font-mono font-bold tracking-widest uppercase"
+              >ATS Keywords Suggestion</span
+            >
+          </div>
+          <p class="text-[10px] text-slate-400 leading-normal">
+            Generate high-value applicant tracking keywords tailored to your
+            target professional role to secure maximum parser scores.
+          </p>
+          <button
+            type="button"
+            id="ats-keyword-btn"
+            onclick="triggerATSKeywordGeneration()"
+            class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold text-xs py-2.5 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span>Suggest Keywords</span>
+          </button>
+
+          <!-- Suggestion Results Display -->
+          <div
+            id="ats-suggestions-result"
+            class="hidden bg-slate-950/60 border border-slate-900 rounded-xl p-3 max-h-[220px] overflow-y-auto space-y-2"
+          ></div>
+        </div>
+
+        <!-- ATS Score Optimization Widget -->
+        <div
+          class="bg-indigo-950/20 border border-indigo-500/15 rounded-2xl p-4 space-y-3.5 backdrop-blur-sm"
+        >
+          <div class="flex items-center justify-between text-indigo-400">
+            <div class="flex items-center gap-2">
+              <span class="text-sm">📈</span>
+              <span
+                class="text-[10px] font-mono font-bold tracking-widest uppercase"
+                >ATS Score Optimization</span
+              >
+            </div>
+            <!-- Dynamic Badges -->
+            <span
+              id="ats-score-badge"
+              class="hidden text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full font-mono bg-rose-950/40 text-rose-450"
+              >--</span
+            >
+          </div>
+
+          <!-- Score Gauge Fill -->
+          <div class="space-y-2">
+            <div
+              class="flex justify-between items-center font-mono text-[10px] text-slate-400"
+            >
+              <span>Parser Index Match</span>
+              <span id="ats-score-percent" class="font-bold text-slate-200"
+                >0%</span
+              >
+            </div>
+            <div
+              class="w-full bg-slate-950/80 rounded-full h-2.5 overflow-hidden border border-slate-850"
+            >
+              <div
+                id="ats-score-bar"
+                class="bg-slate-800 h-full rounded-full transition-all duration-1000"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            id="ats-score-dispatch-btn"
+            onclick="triggerATSScoreCheck()"
+            class="w-full bg-gradient-to-r from-indigo-600 to-indigo-750 hover:from-indigo-650 hover:to-indigo-800 text-white font-bold text-xs py-2.5 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span>Scan Resume Score</span>
+          </button>
+
+          <!-- Recommendation checklist results -->
+          <div
+            id="ats-score-tips-container"
+            class="hidden bg-slate-950/60 border border-slate-900 rounded-xl p-3 max-h-[220px] overflow-y-auto space-y-2 text-[10px] text-slate-400"
+          >
+            <p
+              class="font-bold text-slate-300 uppercase tracking-wide border-b border-slate-900 pb-1.5"
+            >
+              Actionable Checklist
+            </p>
+            <div
+              id="ats-score-tips-list"
+              class="space-y-2 leading-relaxed font-medium"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Sync Actions Moved to Floating Action Dock (Bottom Right) -->
+
+        <!-- 01 / General Layout picker & Identity -->
+        <div class="space-y-3">
+          <span
+            class="text-[10px] font-mono font-bold tracking-widest text-slate-500 uppercase"
+            >01 / LAYOUT & IDENTITY</span
+          >
+          <div
+            class="space-y-3 bg-[#0d1220] p-4 rounded-xl border border-slate-850"
+          >
+            <div>
+              <label
+                class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5"
+                >Design Framework Style</label
+              >
+              <select
+                id="template-picker"
+                onchange="changeActiveTemplate(this.value)"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-indigo-400 font-bold cursor-pointer outline-none transition"
+              >
+                <optgroup label="── Standard Frameworks ──">
+                  <option value="tmpl-walton">Walton Executive (Photo)</option>
+                  <option value="tmpl-walton-nophoto">
+                    Walton Formal (No Photo)
+                  </option>
+                  <option value="tmpl-classic">Minimal Classic Grid</option>
+                  <option value="tmpl-tech">Centered Technical Grid</option>
+                </optgroup>
+                <optgroup label="── ✔ ATS-Friendly Frameworks ──">
+                  <option value="tmpl-ats-clean">
+                    ATS Clean (Serif Column)
+                  </option>
+                  <option value="tmpl-ats-executive">
+                    ATS Executive (Georgian Elegant)
+                  </option>
+                  <option value="tmpl-ats-modern">
+                    ATS Modern (Slate Header Bar)
+                  </option>
+                  <option value="tmpl-ats-compact">
+                    ATS Compact (Calibri Compressed)
+                  </option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div
+              id="ats-tips-panel"
+              class="hidden bg-emerald-950/20 border border-emerald-500/20 rounded-xl p-3 text-[10px] text-emerald-400 space-y-1"
+            >
+              <p
+                class="font-bold uppercase tracking-wider text-[9px] text-emerald-500"
+              >
+                ✔ ATS-Friendly Mode Active
+              </p>
+              <p class="leading-relaxed text-slate-400">
+                Strict single-column text layout generated. No styling cards,
+                avatars, or grids will be exported to guarantee 100% parser
+                index scores.
+              </p>
+            </div>
+
+            <div>
+              <label
+                class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                >Full Name</label
+              >
+              <input
+                type="text"
+                id="master-name"
+                value="Herman Walton"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition font-semibold"
+              />
+            </div>
+
+            <div>
+              <label
+                class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                >Professional Role</label
+              >
+              <input
+                type="text"
+                id="master-role"
+                value="Financial Analyst"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition font-semibold"
+              />
+            </div>
+
+            <!-- Split Basics Form Fields -->
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                  >Email</label
+                >
+                <input
+                  type="email"
+                  id="master-email"
+                  value="example@gmail.com"
+                  class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition"
+                />
+              </div>
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                  >Phone</label
+                >
+                <input
+                  type="text"
+                  id="master-phone"
+                  value="+91 0000000000"
+                  class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                  >Location</label
+                >
+                <input
+                  type="text"
+                  id="master-location"
+                  value="Lucknow, India"
+                  class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition"
+                />
+              </div>
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                  >Website / Portfolio</label
+                >
+                <input
+                  type="text"
+                  id="master-website"
+                  value="portfolio.dev"
+                  class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition"
+                />
+              </div>
+            </div>
+
+            <div id="sidebar-avatar-wrapper">
+              <label
+                class="block text-[10px] font-bold text-slate-400 uppercase mb-1"
+                >Avatar Image URL</label
+              >
+              <input
+                type="text"
+                id="master-avatar"
+                value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 02 / Modular component triggers -->
+        <div class="space-y-3">
+          <span
+            class="text-[10px] font-mono font-bold tracking-widest text-slate-500 uppercase"
+            >02 / ADD WORKSPACE BLOCKS</span
+          >
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <button
+              onclick="addBlock('summary')"
+              class="bg-[#0c1220] hover:bg-[#12192c] border border-slate-800/80 p-2.5 rounded-xl text-left font-bold text-slate-300 flex items-center gap-2 transition active:scale-95"
+            >
+              📝 Summary
+            </button>
+            <button
+              onclick="addBlock('experience')"
+              class="bg-[#0c1220] hover:bg-[#12192c] border border-slate-800/80 p-2.5 rounded-xl text-left font-bold text-slate-300 flex items-center gap-2 transition active:scale-95"
+            >
+              💼 Experience
+            </button>
+            <button
+              onclick="addBlock('project')"
+              class="bg-[#0c1220] hover:bg-[#12192c] border border-slate-800/80 p-2.5 rounded-xl text-left font-bold text-slate-300 flex items-center gap-2 transition active:scale-95"
+            >
+              🚀 Projects
+            </button>
+            <button
+              onclick="addBlock('skills')"
+              class="bg-[#0c1220] hover:bg-[#12192c] border border-slate-800/80 p-2.5 rounded-xl text-left font-bold text-slate-300 flex items-center gap-2 transition active:scale-95"
+            >
+              🛠️ Skills Grid
+            </button>
+            <button
+              onclick="addBlock('education')"
+              class="bg-[#0c1220] hover:bg-[#12192c] border border-slate-800/80 p-2.5 rounded-xl text-left font-bold text-slate-300 flex items-center gap-2 transition active:scale-95"
+            >
+              🎓 Education
+            </button>
+            <button
+              onclick="addBlock('language')"
+              class="bg-[#0c1220] hover:bg-[#12192c] border border-slate-800/80 p-2.5 rounded-xl text-left font-bold text-slate-300 flex items-center gap-2 transition active:scale-95"
+            >
+              🌐 Languages
+            </button>
+            <button
+              onclick="addBlock('certification')"
+              class="bg-[#0c1220] hover:bg-[#12192c] border border-slate-800/80 p-2.5 rounded-xl text-left font-bold text-slate-300 flex items-center gap-2 transition active:scale-95"
+            >
+              📜 Certificate
+            </button>
+            <button
+              onclick="addBlock('award')"
+              class="bg-[#0c1220] hover:bg-[#12192c] border border-slate-800/80 p-2.5 rounded-xl text-left font-bold text-slate-300 flex items-center gap-2 transition active:scale-95"
+            >
+              🏆 Awards
+            </button>
+          </div>
+        </div>
+
+        <!-- 03 / Active input forms -->
+        <div class="border-t border-slate-900 pt-4 flex-1 space-y-3">
+          <span
+            class="text-[10px] font-mono font-bold tracking-widest text-slate-500 uppercase block mb-1"
+            >03 / ACTIVE FIELDS PANEL</span
+          >
+
+          <!-- Validation alerts container -->
+          <div
+            id="validation-errors"
+            class="hidden bg-rose-950/20 border border-rose-500/20 rounded-xl p-3 text-[10px] text-rose-400 space-y-1"
+          ></div>
+
+          <!-- Dynamic Accordions container -->
+          <div id="dynamic-inputs" class="space-y-4"></div>
+        </div>
+      </aside>
+
+      <!-- Right Blueprint Drafting Space -->
+      <main
+        class="workstation-preview flex-1 bg-[#090b10] p-12 overflow-y-auto flex justify-center items-start h-[calc(100vh-85px)] relative"
+      >
+        <!-- Drafting table grid texture -->
+        <div
+          class="absolute inset-0 bg-[linear-gradient(to_right,#121824_1px,transparent_1px),linear-gradient(to_bottom,#121824_1px,transparent_1px)] bg-[size:30px_30px] opacity-[0.4] pointer-events-none"
+        ></div>
+
+        <!-- Scaled Paper Canvas container -->
+        <div
+          id="canvas-scale-container"
+          class="transition-all duration-300 origin-top scale-[0.95] flex items-center justify-center"
+        >
+          <div
+            id="canvas-paper"
+            class="tmpl-walton w-a4 min-h-a4 bg-white text-slate-800 shadow-2xl rounded-sm transition-all font-sans-inter"
+            style="
+              --theme-accent: #4f46e5;
+              --canvas-font-size: 11px;
+              --canvas-margin: 20mm;
+            "
+          >
+            <header
+              class="pb-4 mb-4 flex justify-between items-start border-b"
+              id="paper-header"
+            >
+              <div
+                class="space-y-1.5 max-w-[72%] transition-all"
+                id="header-text-block"
+              >
+                <h1
+                  id="view-name"
+                  class="text-3xl font-extrabold tracking-tight uppercase text-indigo-600 transition-colors duration-300"
+                >
+                  Herman Walton
+                </h1>
+                <p
+                  id="view-role"
+                  class="text-xs font-bold text-slate-900 tracking-wide uppercase"
+                >
+                  Financial Analyst
+                </p>
+                <p
+                  id="view-contacts"
+                  class="text-[10px] text-slate-500 font-semibold leading-normal"
+                >
+                  Lucknow, India | +91 0000000000 | example@gmail.com
+                </p>
+              </div>
+              <div
+                id="avatar-wrapper"
+                class="w-20 h-24 border border-slate-100 overflow-hidden bg-slate-50 rounded-sm shrink-0 shadow-sm transition-all"
+              >
+                <img
+                  id="view-avatar"
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            </header>
+
+            <!-- Previews items block holder -->
+            <div id="preview-blocks-container" class="space-y-4"></div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Sticky Floating Action Dock (Bottom Right) -->
+      <div
+        class="workstation-actions fixed bottom-6 right-6 z-[49] flex items-center gap-3 bg-[#0d1220]/90 backdrop-blur-md border border-slate-800/80 p-3 rounded-2xl shadow-2xl shadow-indigo-950/50 hover:border-slate-700/80 transition-all duration-300"
+      >
+        <button
+          type="button"
+          onclick="saveActiveResume()"
+          class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
+        >
+          <span>💾 Save Cloud</span>
+        </button>
+        <button
+          type="button"
+          onclick="downloadResumePDF()"
+          class="bg-[#121b2f] hover:bg-[#1a2642] border border-slate-800 text-indigo-400 font-bold text-xs px-5 py-3 rounded-xl transition shadow-md flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
+        >
+          <span>📄 Export PDF</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Engine Drivers Matrix script -->
+    <script>
+      let blockCounter = 0;
+      let blockRegistry = [];
+      let activeResumeId = null; // Stored Cloud Model ID reference
+
+      const ATS_TEMPLATES = new Set([
+        "tmpl-ats-clean",
+        "tmpl-ats-executive",
+        "tmpl-ats-modern",
+        "tmpl-ats-compact",
+      ]);
+
+      const masterName = document.getElementById("master-name");
+      const masterRole = document.getElementById("master-role");
+      const masterEmail = document.getElementById("master-email");
+      const masterPhone = document.getElementById("master-phone");
+      const masterLocation = document.getElementById("master-location");
+      const masterWebsite = document.getElementById("master-website");
+      const masterAvatar = document.getElementById("master-avatar");
+      const sidebarAvatar = document.getElementById("sidebar-avatar-wrapper");
+      const atsTips = document.getElementById("ats-tips-panel");
+
+      const viewName = document.getElementById("view-name");
+      const viewRole = document.getElementById("view-role");
+      const viewAvatar = document.getElementById("view-avatar");
+      const viewContacts = document.getElementById("view-contacts");
+      const canvas = document.getElementById("canvas-paper");
+      const scaleContainer = document.getElementById("canvas-scale-container");
+
+      // Bind input events to compile preview headers dynamically
+      function compileHeaderMetadata() {
+        const email = masterEmail.value.trim();
+        const phone = masterPhone.value.trim();
+        const loc = masterLocation.value.trim();
+        const web = masterWebsite.value.trim();
+
+        let meta = [];
+        if (loc) meta.push(loc);
+        if (phone) meta.push(phone);
+        if (email) meta.push(email);
+        if (web) meta.push(web);
+
+        viewContacts.textContent =
+          meta.join(" | ") || "Enter contacts in basics form";
+      }
+
+      masterName.addEventListener(
+        "input",
+        (e) => (viewName.textContent = e.target.value || "Your Name"),
+      );
+      masterRole.addEventListener(
+        "input",
+        (e) => (viewRole.textContent = e.target.value || "Professional Role"),
+      );
+      masterEmail.addEventListener("input", compileHeaderMetadata);
+      masterPhone.addEventListener("input", compileHeaderMetadata);
+      masterLocation.addEventListener("input", compileHeaderMetadata);
+      masterWebsite.addEventListener("input", compileHeaderMetadata);
+      masterAvatar.addEventListener(
+        "input",
+        (e) => (viewAvatar.src = e.target.value),
+      );
+
+      // Customizer slider functions
+      function updateThemeAccent(colorHex) {
+        canvas.style.setProperty("--theme-accent", colorHex);
+        document.getElementById("accent-color-picker").value = colorHex;
+      }
+
+      function updateThemeFont(fontClass) {
+        canvas.className =
+          canvas.className.replace(/font-\S+/g, "").trim() + " " + fontClass;
+      }
+
+      function updateThemeMargin(marginVal) {
+        canvas.style.setProperty("--canvas-margin", `${marginVal}mm`);
+      }
+
+      function updateThemeFontScale(scaleVal) {
+        canvas.style.setProperty("--canvas-font-size", `${scaleVal}px`);
+      }
+
+      function updateThemeZoom(zoomVal) {
+        scaleContainer.style.transform = `scale(${zoomVal / 100})`;
+        document.getElementById("zoom-value").textContent = `${zoomVal}%`;
+      }
+
+      function changeActiveTemplate(tpl) {
+        canvas.className =
+          canvas.className.replace(/tmpl-\S+/g, "").trim() + " " + tpl;
+        const isATS = ATS_TEMPLATES.has(tpl);
+
+        if (sidebarAvatar) {
+          sidebarAvatar.classList.toggle(
+            "hidden",
+            tpl === "tmpl-walton-nophoto" || isATS,
+          );
+        }
+        if (atsTips) {
+          atsTips.classList.toggle("hidden", !isATS);
+        }
+      }
+
+      // Dynamic inputs list generation matrix
+      function addBlock(
+        type,
+        initialVal1 = "",
+        initialVal2 = "",
+        bulletString = "",
+      ) {
+        blockCounter++;
+        const id = `block-${blockCounter}`;
+        blockRegistry.push({ id, type });
+
+        const inp = document.getElementById("dynamic-inputs");
+        const prv = document.getElementById("preview-blocks-container");
+
+        let inputHTML = "",
+          previewHTML = "";
+
+        if (type === "summary") {
+          inputHTML = `
+            <div id="control-${id}" class="bg-[#0c1220] p-4 rounded-xl border border-slate-850 fade-in space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-mono font-bold text-indigo-400">📝 SUMMARY OBJECTIVE</span>
+                <button onclick="removeBlock('${id}')" class="text-[10px] font-bold text-rose-500 hover:underline">Delete</button>
+              </div>
+              <textarea id="input-field-${id}" oninput="updateBlockText('${id}','summary-text',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-slate-700 h-20 resize-none transition">${initialVal1}</textarea>
+            </div>`;
+          previewHTML = `
+            <div id="preview-${id}" class="fade-in">
+              <div class="section-title">Summary</div>
+              <p class="text-[1em] text-slate-700 leading-relaxed font-medium data-summary-text">${initialVal1 || "Objective copy goes here..."}</p>
+            </div>`;
+        } else if (type === "experience") {
+          inputHTML = `
+            <div id="control-${id}" class="bg-[#0c1220] p-4 rounded-xl border border-slate-850 fade-in space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-mono font-bold text-amber-500">💼 EXPERIENCE ENTRY</span>
+                <button onclick="removeBlock('${id}')" class="text-[10px] font-bold text-rose-500 hover:underline">Delete</button>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="input-v1-${id}" value="${initialVal1}" placeholder="Company Name" oninput="updateBlockText('${id}','company',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none">
+                <input type="text" id="input-v2-${id}" value="${initialVal2}" placeholder="Role Title" oninput="updateBlockText('${id}','role',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none">
+              </div>
+              <textarea id="input-bullets-${id}" placeholder="Bullets (New line separated)" oninput="updateBulletsList('${id}',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 outline-none h-16 resize-none">${bulletString}</textarea>
+            </div>`;
+          previewHTML = `
+            <div id="preview-${id}" class="fade-in">
+              <div class="section-title">Professional Experience</div>
+              <div class="flex justify-between items-baseline font-bold text-[1em] text-slate-900">
+                <span><span class="data-role">${initialVal2 || "Role Position"}</span>, <span class="data-company">${initialVal1 || "Company"}</span></span>
+                <span class="text-slate-600 font-mono text-[0.9em]">2026 — Present</span>
+              </div>
+              <ul class="list-disc pl-4 text-[0.95em] text-slate-600 mt-1 space-y-0.5 font-medium data-bullets-list">
+                <li>Accomplished key task metrics over project cycles smoothly.</li>
+              </ul>
+            </div>`;
+        } else if (type === "project") {
+          inputHTML = `
+            <div id="control-${id}" class="bg-[#0c1220] p-4 rounded-xl border border-slate-850 fade-in space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-mono font-bold text-purple-400">🚀 PROJECT ARCHITECTURE</span>
+                <button onclick="removeBlock('${id}')" class="text-[10px] font-bold text-rose-500 hover:underline">Delete</button>
+              </div>
+              <input type="text" id="input-v1-${id}" value="${initialVal1}" placeholder="Project Name" oninput="updateBlockText('${id}','proj-name',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 outline-none">
+              <textarea id="input-bullets-${id}" placeholder="Description bullets (new line separated)" oninput="updateBulletsList('${id}',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 outline-none h-16 resize-none">${bulletString}</textarea>
+            </div>`;
+          previewHTML = `
+            <div id="preview-${id}" class="fade-in">
+              <div class="section-title">Projects</div>
+              <div class="font-bold text-[1em] text-slate-900 data-proj-name">${initialVal1 || "Project Title"}</div>
+              <ul class="list-disc pl-4 text-[0.95em] text-slate-600 mt-1 space-y-0.5 font-medium data-bullets-list">
+                <li>Key achievement or feature here.</li>
+              </ul>
+            </div>`;
+        } else if (type === "skills") {
+          inputHTML = `
+            <div id="control-${id}" class="bg-[#0c1220] p-4 rounded-xl border border-slate-850 fade-in space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-mono font-bold text-cyan-400">🛠️ SKILLS SEGMENT</span>
+                <button onclick="removeBlock('${id}')" class="text-[10px] font-bold text-rose-500 hover:underline">Delete</button>
+              </div>
+              <input type="text" id="input-v1-${id}" value="${initialVal1}" placeholder="Skills (comma separated)" oninput="updateWaltonSkills('${id}',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none">
+            </div>`;
+          previewHTML = `
+            <div id="preview-${id}" class="fade-in">
+              <div class="section-title">Technical Skills</div>
+              <div class="skill-grid-layout font-medium text-slate-700 data-skills-grid">
+                <div>Skill Segment</div>
+              </div>
+            </div>`;
+        } else if (type === "education") {
+          inputHTML = `
+            <div id="control-${id}" class="bg-[#0c1220] p-4 rounded-xl border border-slate-850 fade-in space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-mono font-bold text-emerald-400">🎓 EDUCATION DETAILS</span>
+                <button onclick="removeBlock('${id}')" class="text-[10px] font-bold text-rose-500 hover:underline">Delete</button>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="input-v1-${id}" value="${initialVal1}" placeholder="Institution Name" oninput="updateBlockText('${id}','institution',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none">
+                <input type="text" id="input-v2-${id}" value="${initialVal2}" placeholder="Degree Title" oninput="updateBlockText('${id}','degree',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none">
+              </div>
+            </div>`;
+          previewHTML = `
+            <div id="preview-${id}" class="fade-in">
+              <div class="section-title">Education</div>
+              <div class="flex justify-between items-baseline font-bold text-[1em] text-slate-900">
+                <span class="data-degree">${initialVal2 || "Degree Course"}</span>
+                <span class="text-slate-600 font-mono text-[0.9em]">Graduation 2026</span>
+              </div>
+              <p class="text-[0.95em] text-slate-500 mt-0.5 data-institution">${initialVal1 || "University Name"}</p>
+            </div>`;
+        } else if (type === "language") {
+          inputHTML = `
+            <div id="control-${id}" class="bg-[#0c1220] p-4 rounded-xl border border-slate-850 fade-in space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-mono font-bold text-pink-400">🌐 LANGUAGES</span>
+                <button onclick="removeBlock('${id}')" class="text-[10px] font-bold text-rose-500 hover:underline">Delete</button>
+              </div>
+              <input type="text" id="input-v1-${id}" value="${initialVal1}" placeholder="Languages (comma separated)" oninput="updateBlockText('${id}','lang-line',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none">
+            </div>`;
+          previewHTML = `
+            <div id="preview-${id}" class="fade-in">
+              <div class="section-title">Languages</div>
+              <p class="text-[1em] text-slate-700 font-medium data-lang-line">${initialVal1 || "English, Spanish"}</p>
+            </div>`;
+        } else if (type === "certification") {
+          inputHTML = `
+            <div id="control-${id}" class="bg-[#0c1220] p-4 rounded-xl border border-slate-850 fade-in space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-mono font-bold text-yellow-500">📜 CERTIFICATIONS</span>
+                <button onclick="removeBlock('${id}')" class="text-[10px] font-bold text-rose-500 hover:underline">Delete</button>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="input-v1-${id}" value="${initialVal1}" placeholder="Certification Name" oninput="updateBlockText('${id}','cert-name',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none">
+                <input type="text" id="input-v2-${id}" value="${initialVal2}" placeholder="Issuing Organization" oninput="updateBlockText('${id}','cert-org',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none">
+              </div>
+            </div>`;
+          previewHTML = `
+            <div id="preview-${id}" class="fade-in">
+              <div class="section-title">Certifications</div>
+              <div class="flex justify-between items-baseline text-[1em] text-slate-900 font-bold">
+                <span class="data-cert-name">${initialVal1 || "AWS Solutions Architect"}</span>
+                <span class="text-slate-500 font-normal data-cert-org">${initialVal2 || "Amazon Web Services"}</span>
+              </div>
+            </div>`;
+        } else if (type === "award") {
+          inputHTML = `
+            <div id="control-${id}" class="bg-[#0c1220] p-4 rounded-xl border border-slate-850 fade-in space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-mono font-bold text-red-400">🏆 AWARDS & HONORS</span>
+                <button onclick="removeBlock('${id}')" class="text-[10px] font-bold text-rose-500 hover:underline">Delete</button>
+              </div>
+              <textarea id="input-bullets-${id}" placeholder="Awards (New line separated)" oninput="updateBulletsList('${id}',this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 outline-none h-16 resize-none">${bulletString}</textarea>
+            </div>`;
+          previewHTML = `
+            <div id="preview-${id}" class="fade-in">
+              <div class="section-title">Honors & Awards</div>
+              <ul class="list-disc pl-4 text-[0.95em] text-slate-700 space-y-0.5 font-medium data-bullets-list">
+                <li>Award metric lines go here...</li>
+              </ul>
+            </div>`;
+        }
+
+        inp.insertAdjacentHTML("beforeend", inputHTML);
+        prv.insertAdjacentHTML("beforeend", previewHTML);
+
+        if (type === "skills" && initialVal1)
+          updateWaltonSkills(id, initialVal1);
+        if (
+          (type === "experience" || type === "project" || type === "award") &&
+          bulletString
+        )
+          updateBulletsList(id, bulletString);
+      }
+
+      function updateBlockText(id, cls, val) {
+        const el = document.querySelector(`#preview-${id} .data-${cls}`);
+        if (el) el.textContent = val;
+      }
+
+      function updateBulletsList(id, str) {
+        const c = document.querySelector(`#preview-${id} .data-bullets-list`);
+        if (!c) return;
+        const items = str
+          .split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        c.innerHTML = items.map((i) => `<li>${i}</li>`).join("");
+      }
+
+      function updateWaltonSkills(id, str) {
+        const c = document.querySelector(`#preview-${id} .data-skills-grid`);
+        if (!c) return;
+        const els = str
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        c.innerHTML = els.map((e) => `<div>${e}</div>`).join("");
+      }
+
+      function removeBlock(id) {
+        document.getElementById(`control-${id}`)?.remove();
+        document.getElementById(`preview-${id}`)?.remove();
+        blockRegistry = blockRegistry.filter((item) => item.id !== id);
+      }
+
+      /* ------------------------------------------------------------------ */
+      /* CONNECTIVITY GATEWAYS ASYNC PIPELINES DIRECT CLOUD SYNC            */
+      /* ------------------------------------------------------------------ */
+
+      // Global Custom AI Configurations & Image OCR States
+      let selectedAIBase64Image = null;
+      let activeAITab = "prompt";
+
+      // Global Access Token Injector Helper with Custom Keys Header Sync
+      function isValidApiKey(val) {
+        if (!val || typeof val !== "string") return false;
+        const trimmed = val.trim();
+        if (!trimmed) return false;
+        if (trimmed.length < 20) return false;
+        if (trimmed.includes("placeholder") || trimmed.includes("your_"))
+          return false;
+        return true;
+      }
+
+      function getAuthHeaders() {
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        };
+        const geminiKey = localStorage.getItem("custom_gemini_key");
+        const openaiKey = localStorage.getItem("custom_openai_key");
+        if (isValidApiKey(geminiKey))
+          headers["x-gemini-key"] = geminiKey.trim();
+        if (isValidApiKey(openaiKey))
+          headers["x-openai-key"] = openaiKey.trim();
+        return headers;
+      }
+
+      // Smart Authorization & Token Refresh Interceptor
+      async function fetchWithAuth(url, options = {}) {
+        if (!options.headers) {
+          options.headers = {};
+        }
+
+        // Merge getAuthHeaders() values into options.headers
+        const authHeaders = getAuthHeaders();
+        options.headers = { ...authHeaders, ...options.headers };
+
+        let res = await fetch(url, options);
+
+        // If the request returns 401 (Not Authorized), try to refresh token automatically
+        if (res.status === 401) {
+          console.warn(
+            "[Auth Interceptor] Access token expired. Attempting refresh...",
+          );
+          const refreshToken = localStorage.getItem("refreshToken");
+          if (refreshToken) {
+            try {
+              const refreshRes = await fetch("/api/auth/refresh", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ refreshToken }),
+              });
+              const refreshData = await refreshRes.json();
+              if (refreshData.success && refreshData.accessToken) {
+                console.log(
+                  "[Auth Interceptor] Access token refreshed successfully!",
+                );
+                localStorage.setItem("accessToken", refreshData.accessToken);
+
+                // Retry the original request with the new access token
+                options.headers["Authorization"] =
+                  `Bearer ${refreshData.accessToken}`;
+                res = await fetch(url, options);
+
+                if (res.status === 401) {
+                  throw new Error("SESSION_EXPIRED");
+                }
+              } else {
+                throw new Error("SESSION_EXPIRED");
+              }
+            } catch (err) {
+              console.error(
+                "[Auth Interceptor] Failed to perform token refresh:",
+                err,
+              );
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("refreshToken");
+              alert("Session expired. Please log in again to continue.");
+              window.location.href = "/login.html";
+              throw new Error("SESSION_EXPIRED");
+            }
+          } else {
+            console.error(
+              "[Auth Interceptor] No refresh token found in storage. Redirecting to login...",
+            );
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            alert("Session expired. Please log in again to continue.");
+            window.location.href = "/login.html";
+            throw new Error("SESSION_EXPIRED");
+          }
+        }
+        return res;
+      }
+
+      // Collapsible API Settings Drawer handlers
+      function toggleAPISettings() {
+        const drawer = document.getElementById("api-settings-drawer");
+        if (drawer) drawer.classList.toggle("hidden");
+      }
+
+      function toggleKeyVisibility(inputId) {
+        const input = document.getElementById(inputId);
+        if (input) input.type = input.type === "password" ? "text" : "password";
+      }
+
+      function saveAPIEngineKeys() {
+        const geminiVal = document
+          .getElementById("custom-gemini-key")
+          .value.trim();
+        const openaiVal = document
+          .getElementById("custom-openai-key")
+          .value.trim();
+        localStorage.setItem("custom_gemini_key", geminiVal);
+        localStorage.setItem("custom_openai_key", openaiVal);
+
+        const btn = document.querySelector(
+          "#api-settings-drawer button[onclick='saveAPIEngineKeys()']",
+        );
+        const origText = btn.innerHTML;
+        btn.innerHTML = "Keys Saved Successfully! ✓";
+        btn.disabled = true;
+        btn.className =
+          "w-full bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 hover:text-emerald-300 border border-emerald-500/20 font-bold text-[10px] py-1.5 rounded-lg transition";
+
+        setTimeout(() => {
+          btn.innerHTML = origText;
+          btn.disabled = false;
+          btn.className =
+            "w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 hover:text-indigo-300 border border-indigo-500/20 font-bold text-[10px] py-1.5 rounded-lg transition active:scale-95 cursor-pointer";
+          toggleAPISettings();
+        }, 1200);
+      }
+
+      function loadAPIEngineKeys() {
+        const geminiVal = localStorage.getItem("custom_gemini_key") || "";
+        const openaiVal = localStorage.getItem("custom_openai_key") || "";
+        const gInput = document.getElementById("custom-gemini-key");
+        const oInput = document.getElementById("custom-openai-key");
+        if (gInput) gInput.value = geminiVal;
+        if (oInput) oInput.value = openaiVal;
+      }
+
+      // Tab selector triggers
+      function toggleAITab(tab) {
+        activeAITab = tab;
+        const tabPrompt = document.getElementById("tab-prompt");
+        const tabPhoto = document.getElementById("tab-photo");
+        const tabPdf = document.getElementById("tab-pdf");
+        const viewPrompt = document.getElementById("ai-view-prompt");
+        const viewPhoto = document.getElementById("ai-view-photo");
+        const viewPdf = document.getElementById("ai-view-pdf");
+        const dispatchBtn = document.getElementById("ai-dispatch-btn");
+
+        // Reset all tabs classes
+        tabPrompt.className =
+          "flex-1 py-1.5 text-center font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition cursor-pointer";
+        tabPhoto.className =
+          "flex-1 py-1.5 text-center font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition cursor-pointer";
+        tabPdf.className =
+          "flex-1 py-1.5 text-center font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition cursor-pointer";
+
+        // Hide all views
+        viewPrompt.classList.add("hidden");
+        viewPhoto.classList.add("hidden");
+        viewPdf.classList.add("hidden");
+
+        if (tab === "prompt") {
+          tabPrompt.className =
+            "flex-1 py-1.5 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition cursor-pointer";
+          viewPrompt.classList.remove("hidden");
+          dispatchBtn.innerHTML = `<span>Build Layout via AI</span>`;
+        } else if (tab === "photo") {
+          tabPhoto.className =
+            "flex-1 py-1.5 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition cursor-pointer";
+          viewPhoto.classList.remove("hidden");
+          dispatchBtn.innerHTML = `<span>Blueprint Photo via AI</span>`;
+        } else if (tab === "pdf") {
+          tabPdf.className =
+            "flex-1 py-1.5 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition cursor-pointer";
+          viewPdf.classList.remove("hidden");
+          dispatchBtn.innerHTML = `<span>Blueprint PDF via AI</span>`;
+        }
+      }
+
+      // Drag and Drop PDF File Handlers
+      function triggerAIPdfSelect() {
+        document.getElementById("ai-pdf-file-input").click();
+      }
+
+      function handleAIDragOverPdf(e) {
+        e.preventDefault();
+        const dropzone = document.getElementById("ai-pdf-dropzone");
+        if (dropzone)
+          dropzone.className =
+            "border-2 border-dashed border-indigo-500 bg-indigo-950/20 rounded-xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-1.5";
+      }
+
+      function handleAIDragLeavePdf(e) {
+        e.preventDefault();
+        const dropzone = document.getElementById("ai-pdf-dropzone");
+        if (dropzone)
+          dropzone.className =
+            "border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl p-4 text-center cursor-pointer hover:bg-indigo-950/10 transition flex flex-col items-center justify-center space-y-1.5";
+      }
+
+      function handleAIDropPdf(e) {
+        e.preventDefault();
+        const dropzone = document.getElementById("ai-pdf-dropzone");
+        if (dropzone)
+          dropzone.className =
+            "border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl p-4 text-center cursor-pointer hover:bg-indigo-950/10 transition flex flex-col items-center justify-center space-y-1.5";
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          processAIPdfFile(e.dataTransfer.files[0]);
+        }
+      }
+
+      function handleAIPdfSelected(input) {
+        if (input.files && input.files.length > 0) {
+          processAIPdfFile(input.files[0]);
+        }
+      }
+
+      function processAIPdfFile(file) {
+        if (file.type !== "application/pdf" && !file.name.endsWith(".pdf")) {
+          alert("Invalid file format. Please upload a valid PDF document.");
+          return;
+        }
+        if (file.size > 4 * 1024 * 1024) {
+          alert("PDF file is too large. Max size supported is 4MB.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          selectedAIBase64Image = e.target.result;
+          const label = document.getElementById("ai-upload-pdf-filename");
+          if (label) {
+            label.textContent = `Attached: ${file.name}`;
+            label.classList.remove("hidden");
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Drag and Drop File Handlers
+      function triggerAIPictureSelect() {
+        document.getElementById("ai-image-file-input").click();
+      }
+
+      function handleAIDragOver(e) {
+        e.preventDefault();
+        const dropzone = document.getElementById("ai-dropzone");
+        if (dropzone)
+          dropzone.className =
+            "border-2 border-dashed border-indigo-500 bg-indigo-950/20 rounded-xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-1.5";
+      }
+
+      function handleAIDragLeave(e) {
+        e.preventDefault();
+        const dropzone = document.getElementById("ai-dropzone");
+        if (dropzone)
+          dropzone.className =
+            "border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl p-4 text-center cursor-pointer hover:bg-indigo-950/10 transition flex flex-col items-center justify-center space-y-1.5";
+      }
+
+      function handleAIDrop(e) {
+        e.preventDefault();
+        const dropzone = document.getElementById("ai-dropzone");
+        if (dropzone)
+          dropzone.className =
+            "border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-xl p-4 text-center cursor-pointer hover:bg-indigo-950/10 transition flex flex-col items-center justify-center space-y-1.5";
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          processAIImageFile(e.dataTransfer.files[0]);
+        }
+      }
+
+      function handleAIPictureSelected(input) {
+        if (input.files && input.files.length > 0) {
+          processAIImageFile(input.files[0]);
+        }
+      }
+
+      function processAIImageFile(file) {
+        if (!file.type.startsWith("image/")) {
+          alert(
+            "Invalid file format. Please upload a valid PNG, JPG, or JPEG image screenshot.",
+          );
+          return;
+        }
+        if (file.size > 4 * 1024 * 1024) {
+          alert("Image is too large. Max size supported is 4MB.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          selectedAIBase64Image = e.target.result;
+          const label = document.getElementById("ai-upload-filename");
+          if (label) {
+            label.textContent = `Attached: ${file.name}`;
+            label.classList.remove("hidden");
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Advanced Multimodal / Role AI Dispatcher
+      async function triggerResumeAIGeneration() {
+        const niche = document.getElementById("ai-input-title").value.trim();
+        const btn = document.getElementById("ai-dispatch-btn");
+
+        const payload = {};
+        if (activeAITab === "photo" || activeAITab === "pdf") {
+          if (!selectedAIBase64Image) {
+            alert(
+              `Please drag & drop or click to upload a resume blueprint ${activeAITab === "pdf" ? "PDF" : "photo"} first.`,
+            );
+            return;
+          }
+          payload.resumeImage = selectedAIBase64Image;
+          payload.targetRole = niche || "Software Engineer";
+        } else {
+          if (!niche) {
+            alert(
+              "Please input a targeted professional role (e.g., Lead Developer).",
+            );
+            return;
+          }
+          payload.targetRole = niche;
+        }
+
+        try {
+          btn.disabled = true;
+          btn.innerHTML = `<span>Processing AI Engine...</span>`;
+
+          const res = await fetchWithAuth("/api/resume/generate-ai", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          const outcome = await res.json();
+          
+          // Check if real AI provider was used
+          if (outcome.usedRealProvider === false) {
+            console.warn("[Client] ⚠️ AI Generation used fallback data (not real AI)");
+            console.warn("[Client] Response:", outcome);
+            alert(
+              "❌ AI Generation Failed\n\n" +
+              "Your Gemini/OpenAI API key didn't work. Using template data instead.\n\n" +
+              "To fix:\n" +
+              "1. Open Settings (⚙️)\n" +
+              "2. Enter a valid Gemini or OpenAI API key\n" +
+              "3. Save and try again"
+            );
+            return;
+          }
+          
+          if (res.ok && outcome.success && outcome.usedRealProvider === true) {
+            const ai = outcome.data;
+            console.log("[Client] ✅ Using real AI-generated content");
+            document.getElementById("dynamic-inputs").innerHTML = "";
+            document.getElementById("preview-blocks-container").innerHTML = "";
+            blockRegistry = [];
+
+            const finalRole =
+              niche || ai.experience?.role || "Software Engineer";
+            masterRole.value = finalRole;
+            viewRole.textContent = finalRole;
+
+            if (ai.summary) addBlock("summary", ai.summary);
+            if (ai.experience) {
+              addBlock(
+                "experience",
+                ai.experience.company || "Example Corp",
+                ai.experience.role || finalRole,
+                ai.experience.bullets || "",
+              );
+            }
+            if (ai.skills) addBlock("skills", ai.skills);
+            if (ai.education) {
+              addBlock(
+                "education",
+                ai.education.institution || "University",
+                ai.education.degree || "Degree",
+              );
+            }
+            if (ai.certifications) {
+              addBlock(
+                "certification",
+                ai.certifications.title,
+                ai.certifications.provider,
+              );
+            }
+            compileHeaderMetadata();
+          } else {
+            alert(
+              "❌ AI Generation Error\n\n" +
+              (outcome.error || "AI Synthesis failed. Check API Keys in settings.") +
+              "\n\nMake sure:\n" +
+              "1. API key is entered in Settings\n" +
+              "2. Gemini Multimodal is enabled\n" +
+              "3. Image/PDF is uploaded (if using photo/PDF tab)"
+            );
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          console.error("AI Generation Error:", err);
+          alert("❌ Network Error\n\nCannot reach AI service. Check your internet connection and try again.");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML =
+            activeAITab === "photo"
+              ? "<span>Blueprint Photo via AI</span>"
+              : activeAITab === "pdf"
+                ? "<span>Blueprint PDF via AI</span>"
+                : "<span>Build Layout via AI</span>";
+        }
+      }
+
+      // Real-Time ATS Score Checker
+      async function triggerATSScoreCheck() {
+        const target = masterRole.value.trim() || "Full Stack Developer";
+        const btn = document.getElementById("ats-score-dispatch-btn");
+        const scoreBadge = document.getElementById("ats-score-badge");
+        const scorePercent = document.getElementById("ats-score-percent");
+        const scoreBar = document.getElementById("ats-score-bar");
+        const tipsContainer = document.getElementById(
+          "ats-score-tips-container",
+        );
+        const tipsList = document.getElementById("ats-score-tips-list");
+
+        const blocksPayload = blockRegistry.map((b) => ({
+          blockType:
+            b.type === "certification"
+              ? "certification"
+              : b.type === "award"
+                ? "award"
+                : b.type,
+          val1:
+            document.getElementById(`input-v1-${b.id}`)?.value ||
+            document.getElementById(`input-field-${b.id}`)?.value ||
+            "",
+          val2: document.getElementById(`input-v2-${b.id}`)?.value || "",
+          bullets:
+            document.getElementById(`input-bullets-${b.id}`)?.value || "",
+        }));
+
+        const resumePayload = {
+          fullName: masterName.value,
+          targetRole: masterRole.value,
+          email: masterEmail.value,
+          phone: masterPhone.value,
+          location: masterLocation.value,
+          summary: blockRegistry.find((b) => b.type === "summary")
+            ? document.getElementById(
+                `input-field-${blockRegistry.find((b) => b.type === "summary").id}`,
+              )?.value || ""
+            : "",
+          templateFramework: document.getElementById("template-picker").value,
+          blocks: blocksPayload,
+        };
+
+        try {
+          btn.disabled = true;
+          btn.innerHTML = `<span>Scanning Telemetry...</span>`;
+          scoreBar.className =
+            "bg-indigo-500 h-full rounded-full transition-all duration-1000 animate-pulse";
+
+          const res = await fetchWithAuth("/api/resume/check-ats", {
+            method: "POST",
+            body: JSON.stringify({
+              targetRole: target,
+              resumeData: resumePayload,
+            }),
+          });
+          const payload = await res.json();
+          if (res.ok && payload.success) {
+            const score = payload.score;
+            scoreBadge.classList.remove("hidden");
+            scoreBadge.textContent = `${score}% MATCH`;
+
+            if (score >= 80) {
+              scoreBadge.className =
+                "text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full font-mono bg-emerald-950/40 text-emerald-400";
+              scoreBar.className =
+                "bg-emerald-500 h-full rounded-full transition-all duration-1000";
+            } else if (score >= 50) {
+              scoreBadge.className =
+                "text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full font-mono bg-amber-950/40 text-amber-450";
+              scoreBar.className =
+                "bg-amber-500 h-full rounded-full transition-all duration-1000";
+            } else {
+              scoreBadge.className =
+                "text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full font-mono bg-rose-950/40 text-rose-450";
+              scoreBar.className =
+                "bg-rose-500 h-full rounded-full transition-all duration-1000";
+            }
+
+            scorePercent.textContent = `${score}%`;
+            scoreBar.style.width = `${score}%`;
+
+            tipsContainer.classList.remove("hidden");
+            tipsList.innerHTML = "";
+
+            if (payload.highlights && payload.highlights.length > 0) {
+              payload.highlights.forEach((tip) => {
+                const item = document.createElement("div");
+                item.className =
+                  "border-l-2 border-slate-800 pl-2.5 py-1 text-slate-350 hover:text-white transition duration-200";
+                item.innerHTML = tip;
+                tipsList.appendChild(item);
+              });
+            } else {
+              tipsList.innerHTML = `<div class="text-emerald-400 font-semibold uppercase tracking-wider text-[9px] flex items-center gap-1"><span>✔</span> Fully Optimized for Applicant Tracking Parsers. Ready for application!</div>`;
+            }
+          } else {
+            alert(payload.error || "ATS Check failed");
+            scoreBar.className =
+              "bg-slate-800 h-full rounded-full transition-all duration-1000";
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          console.error("ATS Scorer error:", err);
+          alert("Network connection error to ATS engine.");
+          scoreBar.className =
+            "bg-slate-800 h-full rounded-full transition-all duration-1000";
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `<span>Scan Resume Score</span>`;
+        }
+      }
+
+      async function triggerATSKeywordGeneration() {
+        const niche =
+          document.getElementById("ai-input-title").value.trim() ||
+          masterRole.value.trim() ||
+          "Full Stack Developer";
+        const btn = document.getElementById("ats-keyword-btn");
+        const container = document.getElementById("ats-suggestions-result");
+
+        try {
+          btn.disabled = true;
+          btn.innerHTML = `<span>Analyzing ATS Terms...</span>`;
+          container.innerHTML = "";
+          container.classList.add("hidden");
+
+          const res = await fetchWithAuth("/api/resume/ats-keywords", {
+            method: "POST",
+            body: JSON.stringify({ targetRole: niche }),
+          });
+          const payload = await res.json();
+
+          if (res.ok && payload.success) {
+            container.classList.remove("hidden");
+
+            let htmlContent = `
+              <div class="text-[10px] font-bold text-emerald-400 mb-2 uppercase tracking-wide flex items-center justify-between">
+                <span>⚡ Suggested Terms</span>
+                <span class="text-slate-500 font-mono text-[9px]">Click term to copy</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5 mb-3">
+            `;
+
+            payload.keywords.forEach((kw) => {
+              htmlContent += `
+                <button 
+                  onclick="copyATSTerm(this, '${kw.term}')"
+                  class="px-2.5 py-1 bg-slate-900 hover:bg-[#12192d] text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 rounded-lg text-[10px] font-medium transition duration-200 active:scale-95 cursor-pointer flex items-center gap-1 group"
+                  title="Click to copy and add to resume"
+                >
+                  <span>${kw.term}</span>
+                  <span class="text-emerald-500 font-bold font-mono text-[9px] group-hover:scale-105 transition">${kw.score}%</span>
+                </button>
+              `;
+            });
+
+            htmlContent += `
+              </div>
+              <div class="border-t border-slate-900/60 pt-2.5 mt-2 space-y-2">
+                <span class="text-[9px] font-mono text-slate-500 uppercase tracking-widest block font-bold">INTEGRATION STRATEGY:</span>
+            `;
+
+            payload.keywords.slice(0, 3).forEach((kw) => {
+              htmlContent += `
+                <div class="text-[10px] leading-relaxed text-slate-400 border-l-2 border-slate-800 pl-2">
+                  <strong class="text-slate-300">${kw.term}:</strong> ${kw.context}
+                </div>
+              `;
+            });
+
+            htmlContent += `</div>`;
+            container.innerHTML = htmlContent;
+          } else {
+            alert(payload.error || "ATS analysis failed");
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          console.error("ATS generation error:", err);
+          alert("Network connection error to ATS engine.");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `<span>Suggest Keywords</span>`;
+        }
+      }
+
+      function copyATSTerm(element, term) {
+        navigator.clipboard
+          .writeText(term)
+          .then(() => {
+            const originalHTML = element.innerHTML;
+            element.innerHTML = `<span>Copied! ✓</span>`;
+            element.classList.remove(
+              "bg-slate-900",
+              "border-slate-800",
+              "text-slate-300",
+            );
+            element.classList.add(
+              "bg-emerald-950/40",
+              "border-emerald-500/20",
+              "text-emerald-400",
+            );
+
+            setTimeout(() => {
+              element.innerHTML = originalHTML;
+              element.classList.remove(
+                "bg-emerald-950/40",
+                "border-emerald-500/20",
+                "text-emerald-400",
+              );
+              element.classList.add(
+                "bg-slate-900",
+                "border-slate-800",
+                "text-slate-300",
+              );
+            }, 1000);
+          })
+          .catch((err) => {
+            console.error("Copy failed:", err);
+          });
+      }
+
+      async function saveActiveResume() {
+        const validationAlert = document.getElementById("validation-errors");
+        validationAlert.classList.add("hidden");
+        validationAlert.innerHTML = "";
+
+        // Client-side validations alignment
+        let errors = [];
+        if (!masterName.value.trim()) errors.push("Full Name is required");
+        if (!masterRole.value.trim())
+          errors.push("Target Professional Role is required");
+        if (!masterEmail.value.trim() || !masterEmail.value.includes("@"))
+          errors.push("Valid Email is required");
+
+        if (errors.length > 0) {
+          validationAlert.innerHTML =
+            `<p class="font-bold">⚠️ Fix Validation Errors:</p>` +
+            errors.map((e) => `• ${e}`).join("<br>");
+          validationAlert.classList.remove("hidden");
+          return;
+        }
+
+        const blocksPayload = blockRegistry.map((b) => {
+          let blockData = {
+            blockType:
+              b.type === "certification"
+                ? "certification"
+                : b.type === "award"
+                  ? "award"
+                  : b.type,
+            val1:
+              document.getElementById(`input-v1-${b.id}`)?.value ||
+              document.getElementById(`input-field-${b.id}`)?.value ||
+              "",
+            val2: document.getElementById(`input-v2-${b.id}`)?.value || "",
+            bullets:
+              document.getElementById(`input-bullets-${b.id}`)?.value || "",
+          };
+          return blockData;
+        });
+
+        // Pack structured contacts metadata
+        const resumePayload = {
+          fullName: masterName.value,
+          targetRole: masterRole.value,
+          email: masterEmail.value,
+          phone: masterPhone.value,
+          location: masterLocation.value,
+          avatarUrl: masterAvatar.value,
+          contactLine: `${masterLocation.value} | ${masterPhone.value} | ${masterEmail.value} | ${masterWebsite.value}`,
+          templateFramework: document.getElementById("template-picker").value,
+          blocksData: blocksPayload,
+        };
+
+        const syncDot = document.getElementById("sync-indicator-dot");
+        const syncText = document.getElementById("sync-indicator-text");
+
+        try {
+          syncDot.className =
+            "w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse";
+          syncText.textContent = "SYNCHRONIZING CLOUD...";
+
+          // Decouple Insert vs Update based on cached ID reference
+          const saveUrl = activeResumeId
+            ? `/api/resume/${activeResumeId}`
+            : "/api/resume";
+          const saveMethod = activeResumeId ? "PUT" : "POST";
+
+          const res = await fetchWithAuth(saveUrl, {
+            method: saveMethod,
+            body: JSON.stringify(resumePayload),
+          });
+          const outcome = await res.json();
+          if (res.ok && outcome.success) {
+            activeResumeId = outcome.resume._id;
+            syncDot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+            syncText.textContent = "Saved to Cloud Cluster";
+          } else {
+            syncDot.className = "w-1.5 h-1.5 rounded-full bg-rose-500";
+            syncText.textContent = "Sync Mismatch Fault";
+            alert(
+              "Database rejected save packet: " +
+                (outcome.error || "Mismatched metadata."),
+            );
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          syncDot.className = "w-1.5 h-1.5 rounded-full bg-rose-500";
+          syncText.textContent = "Offline Mode";
+          console.error("Database connection fault:", err);
+          alert(
+            "Database connection offline. Preserved locally on browser thread.",
+          );
+        }
+      }
+
+      // Auto-load welcome-back saved records
+      async function loadSavedResumeData() {
+        const syncDot = document.getElementById("sync-indicator-dot");
+        const syncText = document.getElementById("sync-indicator-text");
+        try {
+          syncDot.className =
+            "w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse";
+          syncText.textContent = "Retrieving saved blueprint...";
+          const res = await fetchWithAuth("/api/resume", {
+            method: "GET",
+          });
+          const payload = await res.json();
+          if (res.ok && payload.success && payload.count > 0) {
+            // Load the most recently modified resume
+            const model = payload.resumes[0];
+            activeResumeId = model._id;
+
+            masterName.value = model.fullName || "";
+            viewName.textContent = model.fullName || "";
+
+            masterRole.value = model.targetRole || "";
+            viewRole.textContent = model.targetRole || "";
+
+            masterEmail.value = model.email || "";
+            masterPhone.value = model.phone || "";
+            masterLocation.value = model.location || "";
+
+            // Extract website if present in contact line
+            if (model.contactLine && model.contactLine.includes(" | ")) {
+              const parts = model.contactLine.split(" | ");
+              masterWebsite.value = parts[3] || "";
+            } else {
+              masterWebsite.value = "";
+            }
+
+            masterAvatar.value = model.avatarUrl || "";
+            viewAvatar.src = model.avatarUrl || "";
+
+            document.getElementById("template-picker").value =
+              model.templateFramework || "tmpl-walton";
+            changeActiveTemplate(model.templateFramework || "tmpl-walton");
+
+            // Empty defaults
+            document.getElementById("dynamic-inputs").innerHTML = "";
+            document.getElementById("preview-blocks-container").innerHTML = "";
+            blockRegistry = [];
+
+            // Re-render sub blocks cleanly
+            if (model.blocksData && model.blocksData.length > 0) {
+              model.blocksData.forEach((block) => {
+                const bType =
+                  block.blockType === "certification"
+                    ? "certification"
+                    : block.blockType === "award"
+                      ? "award"
+                      : block.blockType;
+                addBlock(bType, block.val1, block.val2, block.bullets);
+              });
+            }
+            compileHeaderMetadata();
+            syncDot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+            syncText.textContent = "Synchronized";
+          } else {
+            // Initialize beautiful default blocks on new accounts
+            addBlock(
+              "summary",
+              "Results-oriented Professional seeking to drive performance benchmarks.",
+            );
+            addBlock(
+              "experience",
+              "Example Corp",
+              "Financial Associate",
+              "Managed client budget portfolios cleanly.\nOptimized transactional tracking matrices.",
+            );
+            addBlock(
+              "skills",
+              "Asset Audit, Risk Forecast, Excel Modeling, Python",
+            );
+            compileHeaderMetadata();
+            syncDot.className = "w-1.5 h-1.5 rounded-full bg-indigo-500";
+            syncText.textContent = "New Sandbox Draft";
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          console.error("Failed to load saved database credentials:", err);
+          syncDot.className = "w-1.5 h-1.5 rounded-full bg-rose-500";
+          syncText.textContent = "Offline Draft Mode";
+
+          // Fallback init
+          addBlock(
+            "summary",
+            "Results-oriented Professional seeking to drive performance benchmarks.",
+          );
+          compileHeaderMetadata();
+        }
+      }
+
+      /* ================================================================ */
+      /* EXPORT & DOWNLOAD PROCEDURES WITH CLONE COMPILATION              */
+      /* ================================================================ */
+      function downloadResumePDF() {
+        const element = document.getElementById("canvas-paper");
+        const fileName = `${masterName.value || "Resume"}_Resume.pdf`;
+
+        if (typeof html2pdf !== "undefined") {
+          const clonedElement = element.cloneNode(true);
+
+          clonedElement.style.transform = "none";
+          clonedElement.style.scale = "1";
+          clonedElement.style.margin = "0";
+          clonedElement.style.padding = "20mm";
+          clonedElement.style.border = "none";
+          clonedElement.style.boxShadow = "none";
+          clonedElement.style.borderRadius = "0";
+          clonedElement.style.width = "210mm";
+
+          const opt = {
+            margin: [0, 0, 0, 0],
+            filename: fileName,
+            image: { type: "jpeg", quality: 0.99 },
+            html2canvas: {
+              scale: 2,
+              logging: false,
+              useCORS: true,
+              allowTaint: true,
+            },
+            jsPDF: {
+              orientation: "portrait",
+              unit: "mm",
+              format: "a4",
+              compress: true,
+            },
+            pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+          };
+
+          html2pdf()
+            .set(opt)
+            .from(clonedElement)
+            .save()
+            .catch((err) => {
+              console.error("PDF generation error:", err);
+              window.print();
+            });
+        } else {
+          alert('Opening print window. Select "Save as PDF" to export.');
+          window.print();
+        }
+      }
+
+      // Initialize on page load
+      window.addEventListener("load", () => {
+        loadSavedResumeData();
+        loadAPIEngineKeys();
+
+        // Fade and remove page loader
+        const loader = document.getElementById("page-loader");
+        if (loader) {
+          loader.classList.add("opacity-0");
+          loader.classList.add("pointer-events-none");
+          setTimeout(() => loader.remove(), 500);
+        }
+      });
+    </script>
+
+    <!-- html2pdf bundle inclusion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  </body>
+</html>

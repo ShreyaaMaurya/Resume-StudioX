@@ -1,0 +1,97 @@
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│                  🔴 DEPENDENCY ERROR - EXACT FIX                          │
+│                                                                             │
+│                Copy and paste this exact command:                          │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+⚠️ ERROR YOU GOT:
+═════════════════════════════════════════════════════════════════════════════
+
+  Error: Cannot find module 'jsonwebtoken'
+
+
+✅ HOW TO FIX IT:
+═════════════════════════════════════════════════════════════════════════════
+
+
+📝 STEP 1: Copy this command
+───────────────────────────
+
+cd /d "c:\Users\admin\OneDrive\Desktop\ResumeBuilder" && npm install
+
+
+📝 STEP 2: Paste it in Command Prompt
+──────────────────────────────────────
+
+1. Press: Windows + R
+2. Type: cmd
+3. Press: Enter
+4. Copy the command above
+5. Right-click in cmd and select "Paste"
+6. Press: Enter
+
+
+📝 STEP 3: Wait for installation
+─────────────────────────────────
+
+Wait 1-2 minutes until you see:
+
+  npm notice added XXX packages
+
+
+📝 STEP 4: Start the server
+───────────────────────────
+
+After npm install finishes, run:
+
+  npm run dev
+
+
+✨ EXPECTED OUTPUT:
+═════════════════════════════════════════════════════════════════════════════
+
+You should see:
+
+  [nodemon] starting `node server.js`
+  [DATABASE] MongoDB Connected Layer: localhost
+
+  ╔═══════════════════════════════════════════════════════════╗
+  ║       🚀 ResumeBuilder API Server                        ║
+  ║       ✨ Running on http://localhost:5000                ║
+  ║       📊 Environment: development                         ║
+  ╚═══════════════════════════════════════════════════════════╝
+
+
+🧪 THEN TEST IT:
+═════════════════════════════════════════════════════════════════════════════
+
+1. Open: http://localhost:5000/signUp.html
+2. Create account
+3. Open: http://localhost:5000/login.html
+4. Login with account
+5. Should access resume builder ✓
+
+
+✅ THAT'S IT!
+═════════════════════════════════════════════════════════════════════════════
+
+Your authentication system is now working!
+
+
+📞 IF YOU NEED HELP:
+═════════════════════════════════════════════════════════════════════════════
+
+Read these files:
+  • FIX_MISSING_DEPENDENCIES.md
+  • ⚡_INSTALL_NOW.md
+  • 📊_COMPLETE_STATUS.md
+
+
+═════════════════════════════════════════════════════════════════════════════
+
+                    NOW GO RUN THAT COMMAND! 🚀
+
+═════════════════════════════════════════════════════════════════════════════

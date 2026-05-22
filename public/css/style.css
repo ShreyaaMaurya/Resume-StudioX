@@ -1,0 +1,108 @@
+/* Core Setup */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #1e293b;
+}
+
+/* Main Layout Grid */
+.app-container {
+  display: grid;
+  grid-template-columns: 500px 1fr; /* Fixed width for form, fluid for preview */
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Left Sidebar Layout */
+.editor-side {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-right: 2px solid #e2e8f0;
+  padding: 2.5rem;
+  overflow-y: auto; /* Scrollable form fields */
+  box-shadow: 2px 0 12px rgba(15, 23, 42, 0.06);
+}
+
+.form-section {
+  margin-bottom: 2.5rem;
+}
+
+.form-section h3 {
+  margin-bottom: 1.2rem;
+  color: #0f172a;
+  font-size: 1.15rem;
+  font-weight: 700;
+  border-bottom: 3px solid #4f46e5;
+  padding-bottom: 0.6rem;
+  letter-spacing: 0.5px;
+}
+
+.input-group {
+  margin-bottom: 1.3rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+  color: #334155;
+  letter-spacing: 0.3px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  background-color: #fafbff;
+}
+
+/* Right Live Preview Layout */
+.preview-side {
+  padding: 2.5rem;
+  overflow-y: auto; /* Allows scrolling if resume gets long */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+/* A4 Paper Styling */
+.resume-paper {
+  background-color: #ffffff;
+  width: 210mm; /* A4 standard width */
+  min-height: 297mm; /* A4 standard height */
+  padding: 25mm;
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.15), 0 2px 8px rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.resume-header h1 {
+  font-size: 2.8rem;
+  color: #0f172a;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.resume-header .subtitle {
+  font-size: 1.35rem;
+  color: #4f46e5;
+  margin-top: 0.4rem;
+  font-weight: 600;
+}

@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Your Account - ResumeStudioX</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;600;700;800&display=swap');
+      .font-outfit { font-family: 'Outfit', sans-serif; }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-slate-50 via-white to-slate-100 min-h-screen flex flex-col justify-between antialiased font-sans"
+  >
+    <!-- Premium Glassmorphic Page Loader -->
+    <div id="page-loader" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-md transition-all duration-500 ease-out opacity-100">
+      <div class="relative flex items-center justify-center">
+        <div class="absolute w-24 h-24 bg-indigo-500/20 rounded-full blur-xl animate-pulse"></div>
+        <div class="w-16 h-16 border-4 border-slate-800 border-t-indigo-500 rounded-full animate-spin"></div>
+      </div>
+      <div class="mt-6 text-center">
+        <h3 class="text-sm font-black tracking-widest text-white uppercase font-outfit">ResumeStudio <span class="text-indigo-500">X</span></h3>
+        <p class="text-[10px] text-slate-400 font-mono mt-1 animate-pulse uppercase tracking-wider">Mounting Design Grid...</p>
+      </div>
+    </div>
+    <header
+      class="w-full h-20 flex items-center justify-between px-6 md:px-14 border-b border-slate-100 bg-white/80 backdrop-blur-md"
+    >
+      <div class="flex items-center gap-4">
+        <div
+          class="h-10 w-10 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-xl flex items-center justify-center font-bold text-lg text-white shadow-lg"
+        >
+          R
+        </div>
+        <span class="text-lg font-black tracking-tight text-slate-800">
+          ResumeStudio<span
+            class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
+            >X</span
+          >
+        </span>
+      </div>
+      <a
+        href="login.html"
+        class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition"
+      >
+        Already have an account? Sign In
+      </a>
+    </header>
+
+    <main class="flex-1 flex items-center justify-center p-6 my-6">
+      <div
+        class="w-full max-w-md bg-white border border-slate-200/60 rounded-2xl shadow-xl p-8 relative overflow-hidden"
+      >
+        <div
+          class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-600 to-purple-600"
+        ></div>
+
+        <!-- Error Message -->
+        <div
+          id="error-message"
+          class="hidden mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm"
+        ></div>
+
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold text-slate-800 tracking-tight">
+            Create your account
+          </h1>
+          <p class="text-sm text-slate-500 mt-1">
+            Start building ATS-optimized matrices instantly.
+          </p>
+        </div>
+
+        <form class="space-y-4" id="signup-form">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                for="first-name"
+                class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5"
+                >First Name</label
+              >
+              <input
+                type="text"
+                id="first-name"
+                placeholder="Shreya"
+                required
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-4 focus:ring-indigo-100 transition duration-200"
+              />
+            </div>
+            <div>
+              <label
+                for="last-name"
+                class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5"
+                >Last Name</label
+              >
+              <input
+                type="text"
+                id="last-name"
+                placeholder="Maurya"
+                required
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-4 focus:ring-indigo-100 transition duration-200"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="email"
+              class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5"
+              >Email Address</label
+            >
+            <input
+              type="email"
+              id="email"
+              placeholder="name@example.com"
+              required
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-4 focus:ring-indigo-100 transition duration-200"
+            />
+          </div>
+
+          <div>
+            <label
+              for="password"
+              class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="password"
+              placeholder="••••••••"
+              required
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-4 focus:ring-indigo-100 transition duration-200"
+            />
+            <p class="text-[11px] text-slate-400 mt-1.5">
+              Must contain at least 8 alphanumeric elements.
+            </p>
+          </div>
+
+          <div>
+            <label
+              for="confirm-password"
+              class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5"
+              >Confirm Password</label
+            >
+            <input
+              type="password"
+              id="confirm-password"
+              placeholder="••••••••"
+              required
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:border-indigo-600 focus:bg-white focus:ring-4 focus:ring-indigo-100 transition duration-200"
+            />
+          </div>
+
+          <div class="flex items-start mt-2">
+            <input
+              type="checkbox"
+              id="terms"
+              required
+              class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+            />
+            <label
+              for="terms"
+              class="ml-2 text-xs text-slate-500 leading-normal select-none"
+            >
+              I certify that I agree to the
+              <a href="#" class="text-indigo-600 font-semibold hover:underline"
+                >Terms of Service</a
+              >
+              and legal
+              <a href="#" class="text-indigo-600 font-semibold hover:underline"
+                >Privacy Parameter Policies</a
+              >.
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            id="submit-btn"
+            class="w-full mt-2 py-3 px-4 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 hover:shadow-xl hover:shadow-indigo-200/50 transition-all duration-200 transform active:scale-[0.99] text-sm tracking-wide"
+          >
+            Create Free Account
+          </button>
+        </form>
+
+        <div class="relative flex py-4 items-center my-1">
+          <div class="flex-grow border-t border-slate-200"></div>
+          <span
+            class="flex-shrink mx-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+            >Or Register With</span
+          >
+          <div class="flex-grow border-t border-slate-200"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <button
+            class="flex items-center justify-center gap-2 py-2.5 px-4 border border-slate-200 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-600 transition duration-200 shadow-sm active:scale-[0.98]"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24">
+              <path
+                fill="#EA4335"
+                d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.63 14.97 1 12 1 7.35 1 3.39 3.65 1.5 7.5l3.78 2.93c.88-2.64 3.38-4.39 6.72-4.39z"
+              />
+              <path
+                fill="#4285F4"
+                d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.46c-.29 1.48-1.14 2.73-2.4 3.58l3.73 2.89c2.18-2.01 3.7-4.99 3.7-8.62z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.28 14.57c-.23-.69-.36-1.42-.36-2.18s.13-1.49.36-2.18L1.5 7.28C.54 9.2.01 11.35.01 13.61c0 2.25.53 4.41 1.49 6.32l3.78-2.93z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.73-2.89c-1.04.7-2.38 1.12-4.23 1.12-3.34 0-5.84-1.75-6.72-4.39L1.5 16.86C3.39 20.7 7.35 23 12 23z"
+              />
+            </svg>
+            Google
+          </button>
+
+          <button
+            class="flex items-center justify-center gap-2 py-2.5 px-4 border border-slate-200 rounded-xl hover:bg-slate-50 text-xs font-bold text-slate-600 transition duration-200 shadow-sm active:scale-[0.98]"
+          >
+            <svg class="h-4 w-4 fill-slate-700" viewBox="0 0 16 16">
+              <path
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+              />
+            </svg>
+            GitHub
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer
+      class="py-6 text-center text-xs text-slate-400 border-t border-slate-100 bg-white"
+    >
+      &copy; 2026 ResumeStudioX. All rights reserved.
+    </footer>
+
+    <script>
+      const API_URL = 'http://localhost:5000';
+
+      document.getElementById('signup-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const firstName = document.getElementById('first-name').value;
+        const lastName = document.getElementById('last-name').value;
+        const fullName = `${firstName} ${lastName}`;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const submitBtn = document.getElementById('submit-btn');
+        const errorDiv = document.getElementById('error-message');
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating account...';
+        errorDiv.classList.add('hidden');
+
+        try {
+          const response = await fetch(`${API_URL}/api/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fullName, email, password, confirmPassword })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Signup failed');
+          }
+
+          // Save tokens to localStorage
+          localStorage.setItem('accessToken', data.accessToken);
+          localStorage.setItem('refreshToken', data.refreshToken);
+          localStorage.setItem('user', JSON.stringify(data.user));
+
+          // Redirect to Resume page
+          window.location.href = '/Resume.html';
+        } catch (error) {
+          errorDiv.textContent = error.message;
+          errorDiv.classList.remove('hidden');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Free Account';
+        }
+      });
+
+      // Hide loader on window mount completion
+      window.addEventListener("load", () => {
+        const loader = document.getElementById("page-loader");
+        if (loader) {
+          loader.classList.add("opacity-0");
+          loader.classList.add("pointer-events-none");
+          setTimeout(() => loader.remove(), 500);
+        }
+      });
+    </script>
+  </body>
+</html>

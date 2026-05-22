@@ -1,0 +1,2305 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResumeStudio X | Portfolio Builder Workstation</title>
+    <script>
+      // Verify login before mounting DOM nodes
+      (function () {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          window.location.href = "/login.html";
+        }
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "brand-dark": "#090d16",
+              "brand-slate": "#475569",
+              "brand-light": "#f8fafc",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap");
+
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .workstation-card {
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+      }
+
+      .glow-border:focus-within {
+        border-color: rgba(99, 102, 241, 0.6);
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+      }
+
+      /* Transitions */
+    .pane-transition {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 1024px) {
+      header {
+        padding: 1rem !important;
+      }
+      header .w-full {
+        flex-direction: column !important;
+        gap: 1rem !important;
+      }
+      header .flex {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+      #preview-frame-container {
+        height: 60vh;
+      }
+      .portfolio-actions {
+        height: auto;
+        padding: 1rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        width: 100%;
+      }
+      .portfolio-actions > div {
+        width: 100%;
+      }
+      .portfolio-actions > div:last-child {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 0.75rem !important;
+      }
+      header .w-full {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+      }
+      header .flex {
+        flex-wrap: wrap !important;
+        width: 100% !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+      }
+      header a {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.75rem !important;
+      }
+      #preview-frame-container {
+        height: 55vh;
+        padding: 0.5rem;
+      }
+      .portfolio-actions {
+        align-items: flex-start;
+        width: 100%;
+        padding: 0.75rem !important;
+      }
+      .portfolio-actions button {
+        width: 100%;
+      }
+    }
+  </style>
+  </head>
+
+  <body
+    class="bg-brand-dark text-slate-100 min-h-screen antialiased flex flex-col pb-24"
+  >
+    <!-- Premium Workstation Control Station Header -->
+    <header
+      class="w-full bg-[#0d1220] border-b border-slate-800/80 px-6 py-4 z-40 sticky top-0 shadow-lg backdrop-blur-md bg-opacity-95"
+    >
+      <div
+        class="w-full flex flex-col md:flex-row items-center justify-between gap-4 font-sans text-xs"
+      >
+        <!-- Document Sync Status & Navigation -->
+        <div class="flex flex-wrap items-center gap-4">
+          <a
+            href="index.html"
+            class="flex items-center gap-1.5 px-3 py-1.5 bg-[#12192d] hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white rounded-xl transition duration-300 font-bold tracking-wide"
+          >
+            🏠 Home
+          </a>
+          <a
+            href="Resume.html"
+            class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-650/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 rounded-xl transition duration-300 font-bold tracking-wide"
+          >
+            📄 Resume Builder
+          </a>
+          <a
+            href="cover-letter.html"
+            class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-650/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 rounded-xl transition duration-300 font-bold tracking-wide"
+          >
+            ✉️ Cover Letter
+          </a>
+          <div class="w-px h-6 bg-slate-800"></div>
+
+          <div class="flex items-center gap-3">
+            <div
+              class="h-8 w-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-white text-sm"
+            >
+              P
+            </div>
+            <div>
+              <h2 class="font-extrabold text-sm tracking-tight text-white">
+                Portfolio X Workstation
+              </h2>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span
+                  id="sync-indicator-dot"
+                  class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"
+                ></span>
+                <span
+                  id="sync-indicator-text"
+                  class="text-[10px] font-bold text-slate-400 font-mono uppercase tracking-wider"
+                  >Cloud Connected</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout Responsive controls and API Settings -->
+        <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+          <div
+            class="flex items-center bg-[#070a12] border border-slate-800 p-1 rounded-xl gap-1.5 text-xs font-bold text-slate-300"
+          >
+            <button
+              onclick="setPreviewDevice('desktop')"
+              id="btn-device-desktop"
+              class="px-3 py-1.5 rounded-lg bg-slate-800 text-white shadow transition-all duration-200"
+            >
+              🖥️ Desktop
+            </button>
+            <button
+              onclick="setPreviewDevice('tablet')"
+              id="btn-device-tablet"
+              class="px-3 py-1.5 rounded-lg hover:bg-slate-800/60 transition-all duration-200"
+            >
+              📱 Tablet
+            </button>
+            <button
+              onclick="setPreviewDevice('mobile')"
+              id="btn-device-mobile"
+              class="px-3 py-1.5 rounded-lg hover:bg-slate-800/60 transition-all duration-200"
+            >
+              🤳 Mobile
+            </button>
+          </div>
+
+          <!-- Toggle Design Settings Cog -->
+          <button
+            onclick="toggleSettingsDrawer()"
+            class="h-9 w-9 flex items-center justify-center bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl hover:text-indigo-400 transition"
+            title="API Keys settings"
+          >
+            ⚙️
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN TWO-PANE WORKSPACE -->
+    <main
+      class="max-w-[1600px] w-full mx-auto px-4 md:px-8 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 items-start"
+    >
+      <!-- LEFT EDITING & SEED PANEL -->
+      <section class="lg:col-span-5 space-y-6">
+        <!-- TABS MANAGER -->
+        <div class="flex border-b border-slate-800">
+          <button
+            onclick="switchTab('ai')"
+            id="tab-btn-ai"
+            class="flex-1 text-center py-3 text-xs font-bold uppercase tracking-wider border-b-2 border-indigo-500 text-indigo-400 transition duration-300"
+          >
+            🤖 AI Generator
+          </button>
+          <button
+            onclick="switchTab('manual')"
+            id="tab-btn-manual"
+            class="flex-1 text-center py-3 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition duration-300"
+          >
+            📝 Manual Editor
+          </button>
+        </div>
+
+        <!-- ==================== AI GENERATOR VIEW ==================== -->
+        <div id="view-ai" class="space-y-6">
+          <div
+            class="workstation-card rounded-2xl p-5 border border-slate-800/60 space-y-4"
+          >
+            <div>
+              <h3
+                class="text-xs font-bold uppercase tracking-widest text-indigo-400"
+              >
+                // SEED METHOD
+              </h3>
+              <p class="text-[10px] text-slate-400 mt-0.5">
+                Select a resume from your history or provide files/role tags.
+              </p>
+            </div>
+
+            <!-- Profile Resume Dropdown Select -->
+            <div class="space-y-1.5">
+              <label class="text-[10px] font-bold text-slate-300 uppercase"
+                >Select Workspace Resume</label
+              >
+              <select
+                id="ai-select-resume"
+                class="w-full bg-[#070a10] border border-slate-800 focus:border-indigo-500 text-slate-200 text-xs px-3.5 py-3 rounded-xl outline-none glow-border font-medium"
+              >
+                <option value="">-- Click to fetch saved resumes --</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-3 my-2">
+              <div class="h-[1px] bg-slate-800 flex-1"></div>
+              <span
+                class="text-[9px] font-bold text-slate-500 uppercase font-mono"
+                >Or Upload File</span
+              >
+              <div class="h-[1px] bg-slate-800 flex-1"></div>
+            </div>
+
+            <!-- Upload File Select Container -->
+            <div class="grid grid-cols-2 gap-3">
+              <button
+                onclick="switchUploadMode('image')"
+                id="btn-upload-img"
+                class="bg-indigo-950/20 border border-indigo-500/20 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 text-indigo-400 transition"
+              >
+                📸 Screenshot/Image
+              </button>
+              <button
+                onclick="switchUploadMode('pdf')"
+                id="btn-upload-pdf"
+                class="bg-slate-900 border border-slate-800 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 text-slate-400 hover:text-slate-200 transition"
+              >
+                📄 Resume PDF
+              </button>
+            </div>
+
+            <!-- DRAG IMAGE FILE BOX -->
+            <div id="ai-upload-img-box" class="space-y-2">
+              <div
+                id="ai-image-dropzone"
+                onclick="triggerAIImageSelect()"
+                ondragover="handleAIDragOver(event)"
+                ondragleave="handleAIDragLeave(event)"
+                ondrop="handleAIDrop(event)"
+                class="border-2 border-dashed border-slate-800 hover:border-indigo-500/30 rounded-xl p-4 text-center cursor-pointer hover:bg-indigo-950/10 transition flex flex-col items-center justify-center space-y-1.5"
+              >
+                <span class="text-xl">📸</span>
+                <span class="text-[10px] font-bold text-slate-300"
+                  >Drag resume screenshot here</span
+                >
+                <span class="text-[9px] text-slate-500"
+                  >Supports PNG, JPG (Max 4MB)</span
+                >
+                <span
+                  id="ai-img-filename"
+                  class="text-[10px] text-indigo-400 font-semibold truncate max-w-full hidden"
+                  >No file chosen</span
+                >
+              </div>
+              <input
+                type="file"
+                id="ai-image-file-input"
+                accept="image/*"
+                class="hidden"
+                onchange="handleAIImageSelected(this)"
+              />
+            </div>
+
+            <!-- DRAG PDF FILE BOX -->
+            <div id="ai-upload-pdf-box" class="hidden space-y-2">
+              <div
+                id="ai-pdf-dropzone"
+                onclick="triggerAIPdfSelect()"
+                ondragover="handleAIDragOverPdf(event)"
+                ondragleave="handleAIDragLeavePdf(event)"
+                ondrop="handleAIDropPdf(event)"
+                class="border-2 border-dashed border-slate-800 hover:border-indigo-500/30 rounded-xl p-4 text-center cursor-pointer hover:bg-indigo-950/10 transition flex flex-col items-center justify-center space-y-1.5"
+              >
+                <span class="text-xl">📄</span>
+                <span class="text-[10px] font-bold text-slate-300"
+                  >Drag native PDF document here</span
+                >
+                <span class="text-[9px] text-slate-500"
+                  >Supports PDF format (Max 4MB)</span
+                >
+                <span
+                  id="ai-pdf-filename"
+                  class="text-[10px] text-indigo-400 font-semibold truncate max-w-full hidden"
+                  >No file chosen</span
+                >
+              </div>
+              <input
+                type="file"
+                id="ai-pdf-file-input"
+                accept="application/pdf"
+                class="hidden"
+                onchange="handleAIPdfSelected(this)"
+              />
+            </div>
+
+            <!-- Optional Prompts/Tags -->
+            <div class="space-y-1.5">
+              <label class="text-[10px] font-bold text-slate-300 uppercase"
+                >Target Role / Custom Instruction</label
+              >
+              <input
+                type="text"
+                id="ai-input-role"
+                placeholder="e.g. Lead Full Stack Architect with DevOps flair"
+                class="w-full bg-[#070a10] border border-slate-800 focus:border-indigo-500 text-slate-200 text-xs px-3.5 py-3 rounded-xl outline-none font-medium"
+              />
+            </div>
+
+            <!-- ACTION BUTTON -->
+            <button
+              onclick="compileAIPortfolio()"
+              id="btn-compile-ai"
+              class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold text-xs py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2 active:scale-98"
+            >
+              <span>🚀 Generate AI Portfolio Layout</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================== MANUAL EDITOR VIEW ==================== -->
+        <div id="view-manual" class="hidden space-y-6">
+          <!-- PERSONAL DETAILS ACCORDION -->
+          <div
+            class="workstation-card rounded-2xl p-5 border border-slate-800/60 space-y-4"
+          >
+            <div>
+              <h3
+                class="text-xs font-bold uppercase tracking-widest text-emerald-400"
+              >
+                // PERSONAL DETAILS
+              </h3>
+              <p class="text-[10px] text-slate-400">
+                Configure your hero header branding and identity details.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-bold text-slate-300 uppercase"
+                  >Full Name</label
+                >
+                <input
+                  type="text"
+                  id="field-fullName"
+                  oninput="updateLivePreview()"
+                  placeholder="Alex Rivera"
+                  class="w-full bg-[#070a10] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-3 py-2 rounded-xl outline-none font-medium"
+                />
+              </div>
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-bold text-slate-300 uppercase"
+                  >Target Role / Title</label
+                >
+                <input
+                  type="text"
+                  id="field-targetRole"
+                  oninput="updateLivePreview()"
+                  placeholder="Lead Systems Engineer"
+                  class="w-full bg-[#070a10] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-3 py-2 rounded-xl outline-none font-medium"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-bold text-slate-300 uppercase"
+                >Bio Intro Summary</label
+              >
+              <textarea
+                id="field-bio"
+                oninput="updateLivePreview()"
+                rows="3"
+                placeholder="Write a short summary profile introducing your target career goals..."
+                class="w-full bg-[#070a10] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-3 py-2.5 rounded-xl outline-none font-medium resize-none"
+              ></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-bold text-slate-300 uppercase"
+                  >Email Address</label
+                >
+                <input
+                  type="text"
+                  id="field-email"
+                  oninput="updateLivePreview()"
+                  placeholder="alex.rivera@dev.io"
+                  class="w-full bg-[#070a10] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-3 py-2 rounded-xl outline-none font-medium"
+                />
+              </div>
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-bold text-slate-300 uppercase"
+                  >Phone Number</label
+                >
+                <input
+                  type="text"
+                  id="field-phone"
+                  oninput="updateLivePreview()"
+                  placeholder="+1 (555) 234-5678"
+                  class="w-full bg-[#070a10] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-3 py-2 rounded-xl outline-none font-medium"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2">
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-bold text-slate-300 uppercase"
+                  >GitHub Link</label
+                >
+                <input
+                  type="text"
+                  id="field-github"
+                  oninput="updateLivePreview()"
+                  placeholder="github.com/alex"
+                  class="w-full bg-[#070a10] border border-slate-800 focus:border-emerald-500 text-slate-200 text-[10px] px-2 py-2 rounded-xl outline-none font-medium"
+                />
+              </div>
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-bold text-slate-300 uppercase"
+                  >LinkedIn Link</label
+                >
+                <input
+                  type="text"
+                  id="field-linkedin"
+                  oninput="updateLivePreview()"
+                  placeholder="linkedin.com/in/alex"
+                  class="w-full bg-[#070a10] border border-slate-800 focus:border-emerald-500 text-slate-200 text-[10px] px-2 py-2 rounded-xl outline-none font-medium"
+                />
+              </div>
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-bold text-slate-300 uppercase"
+                  >Twitter/X</label
+                >
+                <input
+                  type="text"
+                  id="field-twitter"
+                  oninput="updateLivePreview()"
+                  placeholder="twitter.com/alex"
+                  class="w-full bg-[#070a10] border border-slate-800 focus:border-emerald-500 text-slate-200 text-[10px] px-2 py-2 rounded-xl outline-none font-medium"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- GROUPED SKILLS DRAWER -->
+          <div
+            class="workstation-card rounded-2xl p-5 border border-slate-800/60 space-y-4"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <h3
+                  class="text-xs font-bold uppercase tracking-widest text-emerald-400"
+                >
+                  // SKILLS MATRIX
+                </h3>
+                <p class="text-[10px] text-slate-400">
+                  Categorize your professional capabilities.
+                </p>
+              </div>
+              <button
+                onclick="addSkillCategory()"
+                class="bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2.5 py-1.5 rounded-xl transition"
+              >
+                + Add Category
+              </button>
+            </div>
+
+            <div id="skills-list-container" class="space-y-3">
+              <!-- Dynamically populated skills blocks -->
+            </div>
+          </div>
+
+          <!-- PROJECTS ACCORDION -->
+          <div
+            class="workstation-card rounded-2xl p-5 border border-slate-800/60 space-y-4"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <h3
+                  class="text-xs font-bold uppercase tracking-widest text-emerald-400"
+                >
+                  // PROJECTS GRID
+                </h3>
+                <p class="text-[10px] text-slate-400">
+                  Feature your best work, source codes, and previews.
+                </p>
+              </div>
+              <button
+                onclick="addProjectBlock()"
+                class="bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2.5 py-1.5 rounded-xl transition"
+              >
+                + Add Project
+              </button>
+            </div>
+
+            <div id="projects-list-container" class="space-y-4">
+              <!-- Dynamically populated projects blocks -->
+            </div>
+          </div>
+
+          <!-- EXPERIENCE TIMELINE -->
+          <div
+            class="workstation-card rounded-2xl p-5 border border-slate-800/60 space-y-4"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <h3
+                  class="text-xs font-bold uppercase tracking-widest text-emerald-400"
+                >
+                  // PROFESSIONAL JOURNEY
+                </h3>
+                <p class="text-[10px] text-slate-400">
+                  Map out your experience achievements.
+                </p>
+              </div>
+              <button
+                onclick="addExperienceBlock()"
+                class="bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2.5 py-1.5 rounded-xl transition"
+              >
+                + Add Role
+              </button>
+            </div>
+
+            <div id="experience-list-container" class="space-y-4">
+              <!-- Dynamically populated experience blocks -->
+            </div>
+          </div>
+        </div>
+
+        <!-- STYLE DESIGN CONFIGS -->
+        <div
+          class="workstation-card rounded-2xl p-5 border border-slate-800/60 space-y-4"
+        >
+          <div>
+            <h3
+              class="text-xs font-bold uppercase tracking-widest text-indigo-400"
+            >
+              // THEME & STYLING
+            </h3>
+            <p class="text-[10px] text-slate-400">
+              Choose template styles, accents, and premium fonts.
+            </p>
+          </div>
+
+          <!-- Template framework selector -->
+          <div class="space-y-1.5">
+            <label class="text-[9px] font-bold text-slate-300 uppercase"
+              >Framework Layout Template</label
+            >
+            <select
+              id="config-template"
+              onchange="updateLivePreview()"
+              class="w-full bg-[#070a10] border border-slate-800 focus:border-indigo-500 text-slate-200 text-xs px-3.5 py-2.5 rounded-xl outline-none font-medium"
+            >
+              <option value="glassmorphic">
+                🌌 Glassmorphic Cyber Dark (Deep Slate & Glow)
+              </option>
+              <option value="professional">
+                💼 Modern Minimal Light (Clean & Sleek Contrast)
+              </option>
+              <option value="hacker">
+                👾 Terminal Cyberpunk (Fira Code & High Contrast Grid)
+              </option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Accent Colors -->
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-bold text-slate-300 uppercase"
+                >Theme Accent</label
+              >
+              <select
+                id="config-theme"
+                onchange="updateLivePreview()"
+                class="w-full bg-[#070a10] border border-slate-800 focus:border-indigo-500 text-slate-200 text-xs px-3.5 py-2.5 rounded-xl outline-none font-medium"
+              >
+                <option value="indigo">💜 Indigo & Purple</option>
+                <option value="emerald">💚 Emerald & Teal</option>
+                <option value="rose">💖 Rose & Orange</option>
+                <option value="amber">💛 Amber & Gold</option>
+                <option value="cyan">💙 Electric Cyan</option>
+                <option value="slate">🖤 Metallic Slate</option>
+              </select>
+            </div>
+
+            <!-- Typography font -->
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-bold text-slate-300 uppercase"
+                >Branding Typography</label
+              >
+              <select
+                id="config-font"
+                onchange="updateLivePreview()"
+                class="w-full bg-[#070a10] border border-slate-800 focus:border-indigo-500 text-slate-200 text-xs px-3.5 py-2.5 rounded-xl outline-none font-medium"
+              >
+                <option value="Inter">Inter (Sleek Clean Sans)</option>
+                <option value="Outfit">Outfit (Modern Bold)</option>
+                <option value="Fira Code">Fira Code (Developer Mono)</option>
+                <option value="Georgia">Georgia (Classic Editorial)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PREVIEW SANDBOX -->
+      <section class="lg:col-span-7 space-y-4 lg:sticky lg:top-[100px]">
+        <!-- Live view label -->
+        <div class="flex items-center justify-between px-2">
+          <div class="flex items-center gap-2">
+            <span
+              class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"
+            ></span>
+            <span
+              class="text-xs font-black tracking-widest text-slate-300 uppercase"
+              >LIVE COMPRESSION SCREEN</span
+            >
+          </div>
+          <span class="text-[10px] font-mono text-slate-500" id="preview-aspect"
+            >Desktop Mode (100% Width)</span
+          >
+        </div>
+
+        <!-- Dynamic Responsive Frame container -->
+        <div
+          id="preview-frame-container"
+          class="w-full border border-slate-800 rounded-2xl bg-brand-dark overflow-hidden flex justify-center items-center shadow-2xl p-3 h-[720px] transition-all duration-300"
+        >
+          <iframe
+            id="preview-iframe"
+            class="w-full h-full border-0 bg-transparent rounded-xl transition-all duration-300"
+          ></iframe>
+        </div>
+      </section>
+    </main>
+
+    <!-- FLOATING ACTION BOTTOM DRAWER -->
+    <div
+      class="portfolio-actions fixed bottom-0 left-0 right-0 h-20 bg-[#0d1220]/90 backdrop-blur-md border-t border-slate-800/80 px-6 flex items-center justify-between z-50 shadow-2xl"
+    >
+      <div class="flex flex-col">
+        <span
+          class="text-[10px] font-mono text-indigo-400 font-bold uppercase tracking-wider"
+          >// STATUS CODE</span
+        >
+        <span id="floating-status" class="text-xs font-bold text-slate-300"
+          >Sync is current. Ready to export.</span
+        >
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Save Config DB button -->
+        <button
+          onclick="savePortfolio()"
+          id="btn-save-db"
+          class="bg-slate-900 border border-slate-700 hover:border-emerald-500 hover:text-emerald-400 font-bold text-xs px-5 py-3 rounded-xl transition shadow active:scale-95"
+        >
+          💾 Save & Sync
+        </button>
+
+        <!-- Direct HTML Export button -->
+        <button
+          onclick="exportStandaloneHTML()"
+          id="btn-export-html"
+          class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black text-xs px-7 py-3 rounded-xl transition shadow-xl active:scale-95 flex items-center gap-2"
+        >
+          🚀 Export Standalone Website
+        </button>
+      </div>
+    </div>
+
+    <!-- Collapsible Settings Cog drawer dialog modal -->
+    <div
+      id="settings-dialog"
+      class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-[99999] p-4"
+    >
+      <div
+        class="workstation-card max-w-md w-full rounded-2xl p-6 border border-slate-800 shadow-2xl space-y-4"
+      >
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">⚙️</span>
+            <span
+              class="text-xs font-black tracking-widest text-slate-300 uppercase font-outfit"
+              >AI SYSTEM CONFIGURATION</span
+            >
+          </div>
+          <button
+            onclick="toggleSettingsDrawer()"
+            class="text-slate-400 hover:text-slate-200 font-bold text-lg"
+          >
+            &times;
+          </button>
+        </div>
+
+        <p class="text-[11px] text-slate-400 leading-relaxed font-medium">
+          Enter your OpenAI or Gemini keys. Key values remain stored 100%
+          securely inside your local browser storage and never touch outer
+          server databases.
+        </p>
+
+        <div class="space-y-3.5">
+          <div class="space-y-1.5">
+            <label class="text-[9px] font-bold text-slate-300 uppercase"
+              >Gemini model key</label
+            >
+            <input
+              type="password"
+              id="dialog-gemini-key"
+              placeholder="AIzaSy..."
+              class="w-full bg-[#070a10] border border-slate-800 focus:border-indigo-500 text-slate-200 text-xs px-3 py-2 rounded-xl outline-none font-medium"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[9px] font-bold text-slate-300 uppercase"
+              >OpenAI model key</label
+            >
+            <input
+              type="password"
+              id="dialog-openai-key"
+              placeholder="sk-..."
+              class="w-full bg-[#070a10] border border-slate-800 focus:border-indigo-500 text-slate-200 text-xs px-3 py-2 rounded-xl outline-none font-medium"
+            />
+          </div>
+        </div>
+
+        <button
+          onclick="saveKeys()"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2.5 rounded-xl transition shadow"
+        >
+          Apply & Save Credentials
+        </button>
+      </div>
+    </div>
+
+    <!-- CORE SCRIPTS BIND -->
+    <script>
+      // Global configuration variables
+      let portfolioState = {
+        fullName: "Alex Rivera",
+        targetRole: "Lead Full Stack Engineer",
+        bio: "Creative and analytical Full Stack Engineer with 5+ years of experience engineering secure, scalable web systems and low-latency API networks. Passionate about building fluid interfaces.",
+        contact: {
+          email: "alex.rivera@dev.io",
+          phone: "+1 (555) 234-5678",
+          github: "https://github.com/alexriveradev",
+          linkedin: "https://linkedin.com/in/alexrivera",
+          twitter: "https://twitter.com/alexrivera_codes",
+        },
+        skills: [
+          {
+            category: "Languages & Core",
+            items: "TypeScript, JavaScript, HTML5, CSS3, SQL",
+          },
+          {
+            category: "Frameworks & Library",
+            items: "React.js, Node.js, Express, Tailwind CSS",
+          },
+        ],
+        projects: [
+          {
+            title: "Vortex Real-time Analytics Dashboard",
+            description:
+              "Engineered a low-latency monitoring engine handling up to 10k transactions per second. Re-routed indices to achieve a 40% reduction in paint speeds.",
+            tags: "React, Node.js, Socket.io, Redis",
+            githubLink: "https://github.com/example/vortex-analytics",
+            liveLink: "https://vortex-analytics-demo.io",
+          },
+          {
+            title: "Aether Glassmorphic visual Suite",
+            description:
+              "Designed a premium glassmorphic system layout utilizing responsive Tailwinds tokens and smooth CSS transitions.",
+            tags: "Next.js, Tailwind, ESM, HSL",
+            githubLink: "https://github.com/example/aether-ui",
+            liveLink: "https://aether-design-system.io",
+          },
+        ],
+        experience: [
+          {
+            role: "Lead Systems Developer",
+            company: "Vortex Tech Solutions",
+            duration: "2023 - Present",
+            description:
+              "Architected high-volume server infrastructures, optimized MongoDB schemas, and coordinated with designer teams.",
+          },
+        ],
+        theme: "indigo",
+        font: "Inter",
+        template: "glassmorphic",
+      };
+
+      let activeTab = "ai";
+      let activeUploadMode = "image";
+      let activeImageBase64 = "";
+      let activePdfBase64 = "";
+
+      // Smart Authorization & Token Refresh Interceptor
+      async function fetchWithAuth(url, options = {}) {
+        if (!options.headers) {
+          options.headers = {};
+        }
+
+        // Ensure Authorization header has the current token from localStorage
+        if (
+          !options.headers["Authorization"] &&
+          localStorage.getItem("accessToken")
+        ) {
+          options.headers["Authorization"] =
+            `Bearer ${localStorage.getItem("accessToken")}`;
+        }
+
+        let res = await fetch(url, options);
+
+        // If the request returns 401 (Not Authorized), try to refresh token automatically
+        if (res.status === 401) {
+          console.warn(
+            "[Auth Interceptor] Access token expired. Attempting refresh...",
+          );
+          const refreshToken = localStorage.getItem("refreshToken");
+          if (refreshToken) {
+            try {
+              const refreshRes = await fetch("/api/auth/refresh", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ refreshToken }),
+              });
+              const refreshData = await refreshRes.json();
+              if (refreshData.success && refreshData.accessToken) {
+                console.log(
+                  "[Auth Interceptor] Access token refreshed successfully!",
+                );
+                localStorage.setItem("accessToken", refreshData.accessToken);
+
+                // Retry the original request with the new access token
+                options.headers["Authorization"] =
+                  `Bearer ${refreshData.accessToken}`;
+                res = await fetch(url, options);
+
+                if (res.status === 401) {
+                  throw new Error("SESSION_EXPIRED");
+                }
+              } else {
+                throw new Error("SESSION_EXPIRED");
+              }
+            } catch (err) {
+              console.error(
+                "[Auth Interceptor] Failed to perform token refresh:",
+                err,
+              );
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("refreshToken");
+              alert("Session expired. Please log in again to continue.");
+              window.location.href = "/login.html";
+              throw new Error("SESSION_EXPIRED");
+            }
+          } else {
+            console.error(
+              "[Auth Interceptor] No refresh token found in storage. Redirecting to login...",
+            );
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            alert("Session expired. Please log in again to continue.");
+            window.location.href = "/login.html";
+            throw new Error("SESSION_EXPIRED");
+          }
+        }
+        return res;
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadKeysFromLocalStorage();
+        loadSavedResumes();
+        fetchUserPortfolio();
+
+        // Setup initial fields
+        populateManualFields();
+        updateLivePreview();
+      });
+
+      // Switch view tabs
+      function switchTab(tab) {
+        activeTab = tab;
+        const btnAi = document.getElementById("tab-btn-ai");
+        const btnManual = document.getElementById("tab-btn-manual");
+        const viewAi = document.getElementById("view-ai");
+        const viewManual = document.getElementById("view-manual");
+
+        if (tab === "ai") {
+          btnAi.className =
+            "flex-1 text-center py-3 text-xs font-bold uppercase tracking-wider border-b-2 border-indigo-500 text-indigo-400 transition duration-300";
+          btnManual.className =
+            "flex-1 text-center py-3 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition duration-300";
+          viewAi.classList.remove("hidden");
+          viewManual.classList.add("hidden");
+        } else {
+          btnManual.className =
+            "flex-1 text-center py-3 text-xs font-bold uppercase tracking-wider border-b-2 border-emerald-500 text-emerald-400 transition duration-300";
+          btnAi.className =
+            "flex-1 text-center py-3 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition duration-300";
+          viewManual.classList.remove("hidden");
+          viewAi.classList.add("hidden");
+          populateManualFields();
+        }
+      }
+
+      // Switch upload modes image vs PDF
+      function switchUploadMode(mode) {
+        activeUploadMode = mode;
+        const btnImg = document.getElementById("btn-upload-img");
+        const btnPdf = document.getElementById("btn-upload-pdf");
+        const boxImg = document.getElementById("ai-upload-img-box");
+        const boxPdf = document.getElementById("ai-upload-pdf-box");
+
+        if (mode === "image") {
+          btnImg.className =
+            "bg-indigo-950/20 border border-indigo-500/20 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 text-indigo-400 transition";
+          btnPdf.className =
+            "bg-slate-900 border border-slate-800 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 text-slate-400 hover:text-slate-200 transition";
+          boxImg.classList.remove("hidden");
+          boxPdf.classList.add("hidden");
+        } else {
+          btnPdf.className =
+            "bg-indigo-950/20 border border-indigo-500/20 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 text-indigo-400 transition";
+          btnImg.className =
+            "bg-slate-900 border border-slate-800 py-2 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 text-slate-400 hover:text-slate-200 transition";
+          boxPdf.classList.remove("hidden");
+          boxImg.classList.add("hidden");
+        }
+      }
+
+      // Load Saved Resumes into dropdown
+      async function loadSavedResumes() {
+        try {
+          const res = await fetchWithAuth("/api/resume");
+          const data = await res.json();
+          if (data.success && data.resumes) {
+            const dropdown = document.getElementById("ai-select-resume");
+            dropdown.innerHTML = `<option value="">-- Seed from an existing profile resume --</option>`;
+            data.resumes.forEach((resume) => {
+              const opt = document.createElement("option");
+              opt.value = resume._id;
+              opt.textContent = `${resume.fullName} - ${resume.targetRole} (${new Date(resume.createdAt).toLocaleDateString()})`;
+              dropdown.appendChild(opt);
+            });
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          console.warn("Failed to load user resumes:", err.message);
+        }
+      }
+
+      // Fetch User Portfolio from database
+      async function fetchUserPortfolio() {
+        try {
+          const res = await fetchWithAuth("/api/portfolio");
+          const data = await res.json();
+          if (data.success && data.portfolio) {
+            portfolioState = {
+              ...portfolioState,
+              ...data.portfolio,
+            };
+            populateManualFields();
+            updateLivePreview();
+            document.getElementById("floating-status").textContent =
+              "Portfolio loaded from session configurations.";
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          console.warn("No portfolio recovered. Seeding with mock outline.");
+        }
+      }
+
+      // Populate form controls
+      function populateManualFields() {
+        document.getElementById("field-fullName").value =
+          portfolioState.fullName || "";
+        document.getElementById("field-targetRole").value =
+          portfolioState.targetRole || "";
+        document.getElementById("field-bio").value = portfolioState.bio || "";
+        document.getElementById("field-email").value =
+          portfolioState.contact?.email || "";
+        document.getElementById("field-phone").value =
+          portfolioState.contact?.phone || "";
+        document.getElementById("field-github").value =
+          portfolioState.contact?.github || "";
+        document.getElementById("field-linkedin").value =
+          portfolioState.contact?.linkedin || "";
+        document.getElementById("field-twitter").value =
+          portfolioState.contact?.twitter || "";
+
+        // Select matching items
+        document.getElementById("config-template").value =
+          portfolioState.template || "glassmorphic";
+        document.getElementById("config-theme").value =
+          portfolioState.theme || "indigo";
+        document.getElementById("config-font").value =
+          portfolioState.font || "Inter";
+
+        // Render dynamic sub lists
+        renderSkillsFormList();
+        renderProjectsFormList();
+        renderExperienceFormList();
+      }
+
+      // Populate State from manual inputs
+      function syncStateFromFields() {
+        portfolioState.fullName =
+          document.getElementById("field-fullName").value;
+        portfolioState.targetRole =
+          document.getElementById("field-targetRole").value;
+        portfolioState.bio = document.getElementById("field-bio").value;
+        portfolioState.contact = {
+          email: document.getElementById("field-email").value,
+          phone: document.getElementById("field-phone").value,
+          github: document.getElementById("field-github").value,
+          linkedin: document.getElementById("field-linkedin").value,
+          twitter: document.getElementById("field-twitter").value,
+        };
+        portfolioState.template =
+          document.getElementById("config-template").value;
+        portfolioState.theme = document.getElementById("config-theme").value;
+        portfolioState.font = document.getElementById("config-font").value;
+
+        // Serialize Skills list
+        portfolioState.skills = [];
+        const skillBlocks = document.querySelectorAll(".form-skill-block");
+        skillBlocks.forEach((block) => {
+          const category = block.querySelector(".input-skill-cat").value;
+          const items = block.querySelector(".input-skill-items").value;
+          if (category) {
+            portfolioState.skills.push({ category, items });
+          }
+        });
+
+        // Serialize Projects list
+        portfolioState.projects = [];
+        const projBlocks = document.querySelectorAll(".form-proj-block");
+        projBlocks.forEach((block) => {
+          const title = block.querySelector(".input-proj-title").value;
+          const description = block.querySelector(".input-proj-desc").value;
+          const tags = block.querySelector(".input-proj-tags").value;
+          const githubLink = block.querySelector(".input-proj-git").value;
+          const liveLink = block.querySelector(".input-proj-live").value;
+          if (title) {
+            portfolioState.projects.push({
+              title,
+              description,
+              tags,
+              githubLink,
+              liveLink,
+            });
+          }
+        });
+
+        // Serialize Experience timeline
+        portfolioState.experience = [];
+        const expBlocks = document.querySelectorAll(".form-exp-block");
+        expBlocks.forEach((block) => {
+          const role = block.querySelector(".input-exp-role").value;
+          const company = block.querySelector(".input-exp-company").value;
+          const duration = block.querySelector(".input-exp-duration").value;
+          const description = block.querySelector(".input-exp-desc").value;
+          if (role) {
+            portfolioState.experience.push({
+              role,
+              company,
+              duration,
+              description,
+            });
+          }
+        });
+      }
+
+      // Drag and Drop files handlers
+      function triggerAIImageSelect() {
+        document.getElementById("ai-image-file-input").click();
+      }
+      function handleAIDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add("border-indigo-500");
+      }
+      function handleAIDragLeave(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove("border-indigo-500");
+      }
+      function handleAIDrop(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove("border-indigo-500");
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith("image/")) {
+          processImageFile(file);
+        }
+      }
+      function handleAIImageSelected(input) {
+        const file = input.files[0];
+        if (file) processImageFile(file);
+      }
+      function processImageFile(file) {
+        const nameSpan = document.getElementById("ai-img-filename");
+        nameSpan.textContent = file.name;
+        nameSpan.classList.remove("hidden");
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          activeImageBase64 = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Drag & Drop PDF helpers
+      function triggerAIPdfSelect() {
+        document.getElementById("ai-pdf-file-input").click();
+      }
+      function handleAIDragOverPdf(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add("border-indigo-500");
+      }
+      function handleAIDragLeavePdf(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove("border-indigo-500");
+      }
+      function handleAIDropPdf(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove("border-indigo-500");
+        const file = e.dataTransfer.files[0];
+        if (file && file.type === "application/pdf") {
+          processPdfFile(file);
+        }
+      }
+      function handleAIPdfSelected(input) {
+        const file = input.files[0];
+        if (file) processPdfFile(file);
+      }
+      function processPdfFile(file) {
+        const nameSpan = document.getElementById("ai-pdf-filename");
+        nameSpan.textContent = file.name;
+        nameSpan.classList.remove("hidden");
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          activePdfBase64 = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Dynamic sub list bindings: SKILLS
+      function renderSkillsFormList() {
+        const container = document.getElementById("skills-list-container");
+        container.innerHTML = "";
+
+        if (!portfolioState.skills || portfolioState.skills.length === 0) {
+          portfolioState.skills = [
+            {
+              category: "Core Technologies",
+              items: "React, Node.js, TypeScript",
+            },
+          ];
+        }
+
+        portfolioState.skills.forEach((skill, idx) => {
+          const div = document.createElement("div");
+          div.className =
+            "form-skill-block bg-[#070a10] p-3 rounded-xl border border-slate-800 space-y-2 relative";
+          div.innerHTML = `
+            <button onclick="removeSkillCategory(${idx})" class="absolute top-2 right-3 text-slate-500 hover:text-red-400 text-xs">🗑️</button>
+            <div class="space-y-1.5">
+              <label class="text-[8px] font-bold text-slate-400 uppercase">Category Title</label>
+              <input type="text" value="${skill.category || ""}" placeholder="e.g. Backend Tools" class="input-skill-cat w-[85%] bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg outline-none font-medium" oninput="debouncePreview()">
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-[8px] font-bold text-slate-400 uppercase">Items (Comma-separated)</label>
+              <input type="text" value="${skill.items || ""}" placeholder="e.g. Express, Redis, Docker" class="input-skill-items w-full bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg outline-none font-medium" oninput="debouncePreview()">
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+      function addSkillCategory() {
+        portfolioState.skills.push({ category: "", items: "" });
+        renderSkillsFormList();
+        updateLivePreview();
+      }
+      function removeSkillCategory(idx) {
+        portfolioState.skills.splice(idx, 1);
+        renderSkillsFormList();
+        updateLivePreview();
+      }
+
+      // Dynamic sub list bindings: PROJECTS
+      function renderProjectsFormList() {
+        const container = document.getElementById("projects-list-container");
+        container.innerHTML = "";
+
+        portfolioState.projects.forEach((proj, idx) => {
+          const div = document.createElement("div");
+          div.className =
+            "form-proj-block bg-[#070a10] p-4.5 rounded-xl border border-slate-800 space-y-2 relative";
+          div.innerHTML = `
+            <button onclick="removeProjectBlock(${idx})" class="absolute top-2.5 right-3 text-slate-500 hover:text-red-400 text-xs">🗑️</button>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="space-y-1">
+                <label class="text-[8px] font-bold text-slate-400 uppercase">Project Title</label>
+                <input type="text" value="${proj.title || ""}" placeholder="e.g. Analytics Platform" class="input-proj-title w-full bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg outline-none font-medium" oninput="debouncePreview()">
+              </div>
+              <div class="space-y-1">
+                <label class="text-[8px] font-bold text-slate-400 uppercase">Stack Tags</label>
+                <input type="text" value="${proj.tags || ""}" placeholder="React, Redis, Websockets" class="input-proj-tags w-full bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg outline-none font-medium" oninput="debouncePreview()">
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[8px] font-bold text-slate-400 uppercase">Short Description</label>
+              <textarea placeholder="Built optimized real-time indexes..." class="input-proj-desc w-full bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg outline-none font-medium h-14 resize-none" oninput="debouncePreview()">${proj.description || ""}</textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="space-y-1">
+                <label class="text-[8px] font-bold text-slate-400 uppercase">GitHub Repo Link</label>
+                <input type="text" value="${proj.githubLink || ""}" placeholder="#" class="input-proj-git w-full bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-[10px] px-2 py-1 rounded-lg outline-none font-medium" oninput="debouncePreview()">
+              </div>
+              <div class="space-y-1">
+                <label class="text-[8px] font-bold text-slate-400 uppercase">Live Host Link</label>
+                <input type="text" value="${proj.liveLink || ""}" placeholder="#" class="input-proj-live w-full bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-[10px] px-2 py-1 rounded-lg outline-none font-medium" oninput="debouncePreview()">
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+      function addProjectBlock() {
+        portfolioState.projects.push({
+          title: "",
+          description: "",
+          tags: "",
+          githubLink: "#",
+          liveLink: "#",
+        });
+        renderProjectsFormList();
+        updateLivePreview();
+      }
+      function removeProjectBlock(idx) {
+        portfolioState.projects.splice(idx, 1);
+        renderProjectsFormList();
+        updateLivePreview();
+      }
+
+      // Dynamic sub list bindings: EXPERIENCE
+      function renderExperienceFormList() {
+        const container = document.getElementById("experience-list-container");
+        container.innerHTML = "";
+
+        portfolioState.experience.forEach((exp, idx) => {
+          const div = document.createElement("div");
+          div.className =
+            "form-exp-block bg-[#070a10] p-4.5 rounded-xl border border-slate-800 space-y-2 relative";
+          div.innerHTML = `
+            <button onclick="removeExperienceBlock(${idx})" class="absolute top-2.5 right-3 text-slate-500 hover:text-red-400 text-xs">🗑️</button>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="col-span-1 space-y-1">
+                <label class="text-[8px] font-bold text-slate-400 uppercase">Role Title</label>
+                <input type="text" value="${exp.role || ""}" placeholder="Lead Dev" class="input-exp-role w-full bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-2 py-1.5 rounded-lg outline-none font-medium" oninput="debouncePreview()">
+              </div>
+              <div class="col-span-1 space-y-1">
+                <label class="text-[8px] font-bold text-slate-400 uppercase">Company</label>
+                <input type="text" value="${exp.company || ""}" placeholder="Vortex Inc" class="input-exp-company w-full bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-2 py-1.5 rounded-lg outline-none font-medium" oninput="debouncePreview()">
+              </div>
+              <div class="col-span-1 space-y-1">
+                <label class="text-[8px] font-bold text-slate-400 uppercase">Duration Period</label>
+                <input type="text" value="${exp.duration || ""}" placeholder="2023 - Present" class="input-exp-duration w-full bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-[10px] px-2 py-1.5 rounded-lg outline-none font-medium" oninput="debouncePreview()">
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[8px] font-bold text-slate-400 uppercase">Timeline Description Highlights</label>
+              <textarea placeholder="Coordinated feature releases..." class="input-exp-desc w-full bg-[#0e1322] border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs px-2.5 py-1.5 rounded-lg outline-none font-medium h-14 resize-none" oninput="debouncePreview()">${exp.description || ""}</textarea>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+      function addExperienceBlock() {
+        portfolioState.experience.push({
+          role: "",
+          company: "",
+          duration: "",
+          description: "",
+        });
+        renderExperienceFormList();
+        updateLivePreview();
+      }
+      function removeExperienceBlock(idx) {
+        portfolioState.experience.splice(idx, 1);
+        renderExperienceFormList();
+        updateLivePreview();
+      }
+
+      // Debounce mechanism for visual updates on keystroke
+      let debounceTimeout;
+      function debouncePreview() {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+          syncStateFromFields();
+          updateLivePreview();
+        }, 300);
+      }
+
+      // Trigger AI compiler synthesis endpoint
+      async function compileAIPortfolio() {
+        const btn = document.getElementById("btn-compile-ai");
+        const origText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> <span>AI Compiling Assets...</span>`;
+
+        const selectVal = document.getElementById("ai-select-resume").value;
+        const promptVal = document.getElementById("ai-input-role").value;
+
+        // Choose proper source file parameter
+        let resumeImageParam = "";
+        if (activeUploadMode === "image" && activeImageBase64) {
+          resumeImageParam = activeImageBase64;
+        } else if (activeUploadMode === "pdf" && activePdfBase64) {
+          resumeImageParam = activePdfBase64;
+        }
+
+        try {
+          const res = await fetchWithAuth("/api/portfolio/generate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-gemini-key": localStorage.getItem("x-gemini-key") || "",
+              "x-openai-key": localStorage.getItem("x-openai-key") || "",
+            },
+            body: JSON.stringify({
+              targetRole: promptVal,
+              resumeId: selectVal,
+              resumeImage: resumeImageParam,
+            }),
+          });
+
+          const data = await res.json();
+          if (data.success && data.data) {
+            portfolioState = {
+              ...portfolioState,
+              ...data.data,
+            };
+            populateManualFields();
+            updateLivePreview();
+
+            // Switch tabs directly
+            switchTab("manual");
+
+            document.getElementById("floating-status").textContent =
+              "AI Portfolio layout generated and mounted!";
+          } else {
+            alert(
+              "Generation failed: " + (data.error || "Unknown server block."),
+            );
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          console.error("Failed AI compilation:", err);
+          alert("Network execution failure: " + err.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = origText;
+        }
+      }
+
+      function compileHTMLContent() {
+        const theme = portfolioState.theme || "indigo";
+        const font = portfolioState.font || "Inter";
+        const template = portfolioState.template || "glassmorphic";
+
+        const defaultBio =
+          "Creative and analytical Full Stack Engineer with 5+ years of experience engineering secure, scalable web systems and low-latency API networks. Passionate about building fluid interfaces.";
+
+        // Mappings for theme colors
+        const themeAccents = {
+          indigo: {
+            primary: "#6366f1",
+            hover: "#4f46e5",
+            glow: "rgba(99, 102, 241, 0.15)",
+            textGrad: "from-indigo-400 to-purple-500",
+          },
+          emerald: {
+            primary: "#10b981",
+            hover: "#059669",
+            glow: "rgba(16, 185, 129, 0.15)",
+            textGrad: "from-emerald-400 to-teal-500",
+          },
+          rose: {
+            primary: "#f43f5e",
+            hover: "#e11d48",
+            glow: "rgba(244, 63, 94, 0.15)",
+            textGrad: "from-rose-400 to-orange-500",
+          },
+          amber: {
+            primary: "#f59e0b",
+            hover: "#d97706",
+            glow: "rgba(245, 158, 11, 0.15)",
+            textGrad: "from-amber-400 to-yellow-500",
+          },
+          cyan: {
+            primary: "#06b6d4",
+            hover: "#0891b2",
+            glow: "rgba(6, 182, 212, 0.15)",
+            textGrad: "from-cyan-400 to-blue-500",
+          },
+          slate: {
+            primary: "#64748b",
+            hover: "#475569",
+            glow: "rgba(100, 116, 139, 0.15)",
+            textGrad: "from-slate-400 to-slate-500",
+          },
+        };
+
+        const activeColors = themeAccents[theme] || themeAccents.indigo;
+
+        // Fonts
+        const activeFontStack =
+          {
+            Inter: "font-family: 'Inter', sans-serif;",
+            Outfit: "font-family: 'Outfit', sans-serif;",
+            "Fira Code": "font-family: 'Fira Code', monospace;",
+            Georgia: "font-family: Georgia, serif;",
+          }[font] || "font-family: 'Inter', sans-serif;";
+
+        let skillsHtml = "";
+        let projectsHtml = "";
+        let experienceHtml = "";
+
+        if (template === "glassmorphic") {
+          // Glassmorphic dark compiler
+          if (portfolioState.skills && portfolioState.skills.length > 0) {
+            portfolioState.skills.forEach((s) => {
+              const skillChips = (s.items || "")
+                .split(",")
+                .map((i) => i.trim())
+                .filter(Boolean);
+              if (skillChips.length > 0) {
+                skillsHtml += `
+                  <div class="p-6 rounded-2xl bg-slate-900/35 border border-slate-800/80 backdrop-blur-xl hover:border-[var(--primary)]/50 transition-all duration-300 group hover:shadow-[0_8px_32px_0_var(--primary-glow)] hover:-translate-y-1">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-[var(--primary)] font-mono mb-4 flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse"></span>
+                      // ${s.category || "Competence"}
+                    </h3>
+                    <div class="flex flex-wrap gap-2.5">
+                      ${skillChips
+                        .map(
+                          (chip) => `
+                        <span class="text-xs px-3.5 py-1.5 rounded-xl font-semibold transition bg-slate-950/70 border border-slate-800/60 text-slate-300 hover:text-white hover:border-[var(--primary)]/50 hover:shadow-[0_0_15px_var(--primary-glow)] hover:scale-105 duration-200">${chip}</span>
+                      `,
+                        )
+                        .join("")}
+                    </div>
+                  </div>
+                `;
+              }
+            });
+          }
+
+          if (portfolioState.projects && portfolioState.projects.length > 0) {
+            portfolioState.projects.forEach((p) => {
+              const tags = (p.tags || "")
+                .split(",")
+                .map((t) => t.trim())
+                .filter(Boolean);
+              projectsHtml += `
+                <div class="group p-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-2 bg-slate-900/30 border border-slate-800/80 hover:border-[var(--primary)]/50 hover:shadow-[0_15px_40px_-15px_rgba(0,0,0,0.6)] relative overflow-hidden flex flex-col justify-between">
+                  <div class="absolute -right-16 -top-16 w-32 h-32 bg-gradient-to-br from-[var(--primary)] to-slate-500/10 opacity-[0.05] blur-2xl transition duration-500 group-hover:scale-150"></div>
+                  <div>
+                    <div class="flex items-start justify-between mb-3">
+                      <h3 class="text-xl font-bold tracking-tight text-white group-hover:text-[var(--primary)] transition font-outfit duration-300">${p.title || "Innovative Solution"}</h3>
+                      <span class="text-[10px] font-mono text-slate-500 group-hover:text-[var(--primary)] transition duration-300">// ACTIVE</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-5 h-16 overflow-hidden">${p.description || "Seamless cloud platform compiling modern visual details."}</p>
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                      ${tags.map((t) => `<span class="text-[9px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-slate-950/65 text-slate-400 border border-slate-800/50 hover:border-[var(--primary)]/30 transition">${t}</span>`).join("")}
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-4 text-xs font-bold pt-4 border-t border-slate-800/50">
+                    ${p.githubLink && p.githubLink !== "#" ? `<a href="${p.githubLink}" target="_blank" class="hover:text-[var(--primary)] flex items-center gap-1.5 transition text-slate-400 duration-200">📁 Repository</a>` : ""}
+                    ${p.liveLink && p.liveLink !== "#" ? `<a href="${p.liveLink}" target="_blank" class="hover:text-[var(--primary)] flex items-center gap-1.5 transition text-slate-400 duration-200">⚡ Launch Live</a>` : ""}
+                  </div>
+                </div>
+              `;
+            });
+          }
+
+          if (
+            portfolioState.experience &&
+            portfolioState.experience.length > 0
+          ) {
+            portfolioState.experience.forEach((e) => {
+              experienceHtml += `
+                <div class="relative pl-8 border-l-2 border-slate-800 ml-4 py-6 group">
+                  <span class="absolute -left-[7px] top-8 w-3 h-3 rounded-full bg-[#090d16] border-2 border-slate-700 transition duration-300 group-hover:scale-150 group-hover:border-[var(--primary)] group-hover:shadow-[0_0_12px_var(--primary-glow)]"></span>
+                  <span class="inline-flex px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[9px] font-mono font-bold uppercase text-[var(--primary)] tracking-wider mb-2">${e.duration || "2023 - Present"}</span>
+                  <h3 class="text-lg font-bold tracking-tight text-white mt-1 font-outfit">${e.role || "Systems Lead"}</h3>
+                  <span class="text-xs font-semibold text-slate-405 block mt-0.5">${e.company || "Vortex Solutions"}</span>
+                  <p class="text-xs leading-relaxed text-slate-400 mt-3 max-w-3xl">${e.description || "Engineered scalable system operations."}</p>
+                </div>
+              `;
+            });
+          }
+        } else if (template === "professional") {
+          // Editorial minimal light compiler
+          if (portfolioState.skills && portfolioState.skills.length > 0) {
+            portfolioState.skills.forEach((s) => {
+              const skillChips = (s.items || "")
+                .split(",")
+                .map((i) => i.trim())
+                .filter(Boolean);
+              if (skillChips.length > 0) {
+                skillsHtml += `
+                  <div class="p-6 rounded-xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-[var(--primary)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.02)] transition duration-300">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 font-mono mb-4 flex items-center gap-2">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[var(--primary)]"></span>
+                      ${s.category || "Competence"}
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                      ${skillChips
+                        .map(
+                          (chip) => `
+                        <span class="text-xs px-3.5 py-1.5 rounded-lg font-medium transition bg-white border border-slate-200 text-slate-600 hover:text-[var(--primary)] hover:border-[var(--primary)] hover:shadow-sm">${chip}</span>
+                      `,
+                        )
+                        .join("")}
+                    </div>
+                  </div>
+                `;
+              }
+            });
+          }
+
+          if (portfolioState.projects && portfolioState.projects.length > 0) {
+            portfolioState.projects.forEach((p) => {
+              const tags = (p.tags || "")
+                .split(",")
+                .map((t) => t.trim())
+                .filter(Boolean);
+              projectsHtml += `
+                <div class="group p-8 bg-white border border-slate-150 hover:border-slate-350 hover:shadow-lg transition-all duration-300 relative overflow-hidden flex flex-col justify-between">
+                  <div>
+                    <div class="flex justify-between items-start mb-3">
+                      <h3 class="text-xl font-bold tracking-tight text-slate-900 group-hover:text-[var(--primary)] transition font-outfit duration-300">${p.title || "Innovative Solution Draft"}</h3>
+                      <span class="text-[9px] font-mono font-bold tracking-widest text-slate-400 uppercase">// EST_DEPLOY</span>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed mb-6 font-light h-16 overflow-hidden">${p.description || "Seamless cloud platform compiling modern visual details."}</p>
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                      ${tags.map((t) => `<span class="text-[9px] font-mono font-semibold tracking-wider px-2 py-0.5 rounded bg-slate-50 text-slate-600 border border-slate-100 hover:border-[var(--primary)]/30 transition">${t}</span>`).join("")}
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-6 text-xs font-bold pt-4 border-t border-slate-100">
+                    ${p.githubLink && p.githubLink !== "#" ? `<a href="${p.githubLink}" target="_blank" class="text-slate-600 hover:text-slate-900 flex items-center gap-1 transition duration-200">📁 GitHub</a>` : ""}
+                    ${p.liveLink && p.liveLink !== "#" ? `<a href="${p.liveLink}" target="_blank" class="text-slate-600 hover:text-slate-900 flex items-center gap-1 transition duration-200">⚡ Demo Site &rarr;</a>` : ""}
+                  </div>
+                </div>
+              `;
+            });
+          }
+
+          if (
+            portfolioState.experience &&
+            portfolioState.experience.length > 0
+          ) {
+            portfolioState.experience.forEach((e) => {
+              experienceHtml += `
+                <div class="relative pl-8 border-l border-slate-200 ml-4 py-6 group">
+                  <span class="absolute -left-[4.5px] top-8 w-2 h-2 rounded-full bg-slate-350 transition duration-300 group-hover:scale-150 group-hover:bg-[var(--primary)]"></span>
+                  <span class="text-[9px] font-mono font-bold uppercase text-[var(--primary)] tracking-widest">${e.duration || "2023 - Present"}</span>
+                  <h3 class="text-base font-bold text-slate-900 mt-1 font-outfit">${e.role || "Systems Lead"}</h3>
+                  <span class="text-xs font-bold text-slate-550 block">${e.company || "Vortex Solutions"}</span>
+                  <p class="text-xs leading-relaxed text-slate-650 mt-3 max-w-2xl font-light">${e.description || "Engineered scalable system operations."}</p>
+                </div>
+              `;
+            });
+          }
+        } else {
+          // High-tech terminal hacker compiler
+          if (portfolioState.skills && portfolioState.skills.length > 0) {
+            portfolioState.skills.forEach((s) => {
+              const skillChips = (s.items || "")
+                .split(",")
+                .map((i) => i.trim())
+                .filter(Boolean);
+              if (skillChips.length > 0) {
+                skillsHtml += `
+                  <div class="p-6 rounded border border-[#00ffcc]/15 bg-black/60 font-mono hover:border-[#00ffcc]/45 hover:shadow-[0_0_15px_rgba(0,255,204,0.1)] transition-all duration-300">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-[#00ffcc] mb-4 flex items-center gap-2">
+                      <span class="animate-pulse">&gt;</span> [CAPABILITY.${(s.category || "Competence").toUpperCase().replace(/\s+/g, "_")}]
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                      ${skillChips
+                        .map(
+                          (chip) => `
+                        <span class="text-xs px-3 py-1 bg-black border border-[#00ffcc]/20 text-[#00ffcc]/80 rounded hover:border-[#00ffcc] hover:text-white transition duration-150 cursor-pointer">[x] ${chip}</span>
+                      `,
+                        )
+                        .join("")}
+                    </div>
+                  </div>
+                `;
+              }
+            });
+          }
+
+          if (portfolioState.projects && portfolioState.projects.length > 0) {
+            portfolioState.projects.forEach((p) => {
+              const tags = (p.tags || "")
+                .split(",")
+                .map((t) => t.trim())
+                .filter(Boolean);
+              projectsHtml += `
+                <div class="p-6 rounded border border-[#00ffcc]/20 bg-black/40 hover:bg-black/85 hover:border-[#00ffcc] hover:shadow-[0_0_25px_rgba(0,255,204,0.2)] transition-all duration-300 font-mono relative overflow-hidden flex flex-col justify-between">
+                  <div>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-[#00ffcc]/10 pb-3 mb-4">
+                      <h3 class="text-base font-black uppercase text-white tracking-wide">&gt; ${p.title || "Solution Draft"}</h3>
+                      <span class="text-[9px] text-[#00ffcc]/50">// CODEBASE: STABLE</span>
+                    </div>
+                    <p class="text-xs text-slate-350 leading-relaxed mb-5 h-16 overflow-hidden">// abstract: ${p.description || "Seamless cloud platform compiling modern visual details."}</p>
+                    <div class="flex flex-wrap gap-1.5 mb-6">
+                      ${tags.map((t) => `<span class="text-[9px] px-2 py-0.5 rounded bg-purple-950/20 text-purple-400 border border-purple-500/20 uppercase tracking-widest font-bold font-mono">${t}</span>`).join("")}
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-4 text-xs font-bold pt-4 border-t border-[#00ffcc]/10">
+                    ${p.githubLink && p.githubLink !== "#" ? `<a href="${p.githubLink}" target="_blank" class="text-[#00ffcc] hover:text-white flex items-center gap-1.5 transition select-none">[ SRC_REPOS ]</a>` : ""}
+                    ${p.liveLink && p.liveLink !== "#" ? `<a href="${p.liveLink}" target="_blank" class="text-[#00ffcc] hover:text-white flex items-center gap-1.5 transition select-none">[ LIVE_DEPLOY ]</a>` : ""}
+                  </div>
+                </div>
+              `;
+            });
+          }
+
+          if (
+            portfolioState.experience &&
+            portfolioState.experience.length > 0
+          ) {
+            portfolioState.experience.forEach((e) => {
+              experienceHtml += `
+                <div class="relative pl-8 border-l border-[#00ffcc]/20 ml-4 py-6 group font-mono">
+                  <span class="absolute -left-[5px] top-8 w-2.5 h-2.5 bg-black border border-[#00ffcc] group-hover:bg-[#00ffcc] transition duration-300 shadow-[0_0_8px_rgba(0,255,204,0.5)]"></span>
+                  <div class="text-[9px] text-[#00ffcc]/50 uppercase tracking-widest font-bold">DUR: [${e.duration || "2023 - PRESENT"}]</div>
+                  <h3 class="text-sm font-bold uppercase text-white mt-1.5 tracking-wide">&gt; ${e.role || "Systems Lead"}</h3>
+                  <span class="text-xs text-purple-405 block mt-0.5">@ ${e.company || "Vortex Solutions"}</span>
+                  <p class="text-xs leading-relaxed text-slate-350 mt-3 max-w-2xl font-mono">// logs: ${e.description || "Engineered scalable system operations."}</p>
+                </div>
+              `;
+            });
+          }
+        }
+
+        // Layout Template Configurations
+        let compiledBody = "";
+
+        if (template === "glassmorphic") {
+          // Deep futuristic slate glow dark mode
+          compiledBody = `
+            <!-- STICKY HEADER NAV -->
+            <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/60 border-b border-slate-900/80 px-6 py-4 flex items-center justify-between">
+              <a href="#" class="font-outfit font-black text-lg text-white tracking-tight flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-gradient-to-tr ${activeColors.textGrad}"></span>
+                ${portfolioState.fullName || "Alex Rivera"}
+              </a>
+              <div class="hidden md:flex items-center gap-6 text-[10px] font-mono tracking-widest font-bold">
+                <a href="#about" class="text-slate-400 hover:text-white transition-colors duration-200">// ABOUT</a>
+                <a href="#skills" class="text-slate-400 hover:text-white transition-colors duration-200">// SKILLS</a>
+                <a href="#projects" class="text-slate-400 hover:text-white transition-colors duration-200">// PROJECTS</a>
+                <a href="#experience" class="text-slate-400 hover:text-white transition-colors duration-200">// EXPERIENCE</a>
+              </div>
+              ${
+                portfolioState.contact?.email
+                  ? `
+                <a href="mailto:${portfolioState.contact.email}" class="text-[10px] px-4 py-2 rounded-xl bg-gradient-to-r ${activeColors.textGrad} hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] text-white font-black font-mono transition duration-300">SYNC_STATION</a>
+              `
+                  : ""
+              }
+            </nav>
+
+            <div class="relative z-10 max-w-5xl mx-auto px-6 pb-24 space-y-32">
+              <!-- HERO BANNER -->
+              <header id="about" class="text-center md:text-left flex flex-col-reverse md:flex-row items-center justify-between gap-12 pt-20">
+                <div class="space-y-6 max-w-2xl flex-1">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--primary)]/10 border border-[var(--primary)]/20 text-[10px] font-mono font-bold uppercase text-[var(--primary)]">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-450 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    Available for Contracts
+                  </span>
+                  <h1 class="text-4xl md:text-6xl font-black tracking-tight text-white leading-none font-outfit">
+                    Hi, I'm <span class="bg-gradient-to-r ${activeColors.textGrad} bg-clip-text text-transparent">${portfolioState.fullName || "Alex Rivera"}</span>
+                  </h1>
+                  <h2 class="text-xl font-bold text-slate-350 font-mono tracking-wide">${portfolioState.targetRole || "Systems Engineer"}</h2>
+                  <p class="text-sm md:text-base text-slate-400 leading-relaxed max-w-xl font-light">${portfolioState.bio || defaultBio}</p>
+                  
+                  <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-4">
+                    ${portfolioState.contact?.email ? `<a href="mailto:${portfolioState.contact.email}" class="bg-[var(--primary)] hover:bg-[var(--hover)] text-white font-bold text-xs px-6 py-3.5 rounded-xl transition duration-300 shadow-lg shadow-[var(--primary)]/15 hover:shadow-[var(--primary)]/35 hover:-translate-y-1 transform">Initiate Connection</a>` : ""}
+                    <div class="flex items-center gap-4 text-slate-400 text-xs font-bold font-mono pl-2">
+                      ${portfolioState.contact?.github ? `<a href="https://${portfolioState.contact.github}" target="_blank" class="hover:text-white transition-colors duration-200 flex items-center gap-1">📁 GitHub</a>` : ""}
+                      ${portfolioState.contact?.linkedin ? `<a href="https://${portfolioState.contact.linkedin}" target="_blank" class="hover:text-white transition-colors duration-200 flex items-center gap-1">💼 LinkedIn</a>` : ""}
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Rotating premium avatar with glowing ambient halo -->
+                <div class="relative shrink-0 group">
+                  <div class="absolute inset-0 bg-gradient-to-tr ${activeColors.textGrad} rounded-3xl blur-2xl opacity-30 group-hover:opacity-60 transition duration-500 group-hover:scale-110"></div>
+                  <div class="h-44 w-44 rounded-3xl bg-gradient-to-tr ${activeColors.textGrad} p-[1.5px] shadow-2xl relative z-10 transition-all duration-500 group-hover:rotate-6 group-hover:scale-105">
+                    <div class="h-full w-full bg-[#080c14]/90 rounded-3xl flex items-center justify-center font-black text-5xl text-white font-outfit tracking-tighter">
+                      ${(portfolioState.fullName || "A").charAt(0)}
+                    </div>
+                  </div>
+                  <div class="absolute -bottom-2 -right-2 bg-slate-900 border border-slate-800 rounded-full px-3 py-1 text-[9px] font-mono font-bold text-slate-400 shadow-lg z-20">
+                    HUB_SYS_v1.0
+                  </div>
+                </div>
+              </header>
+
+              <!-- SKILLS MATRIX -->
+              <section id="skills" class="space-y-8 pt-12 scroll-mt-28">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <h2 class="text-2xl font-black tracking-tight text-white font-outfit uppercase">System Capabilities</h2>
+                    <div class="h-1.5 w-16 bg-gradient-to-r ${activeColors.textGrad} rounded-full mt-2"></div>
+                  </div>
+                  <div class="flex-1 h-[1px] bg-slate-800/40"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  ${skillsHtml || '<p class="text-slate-500 text-xs font-mono">// Compiling capabilities...</p>'}
+                </div>
+              </section>
+
+              <!-- PROJECTS GRID -->
+              <section id="projects" class="space-y-8 pt-12 scroll-mt-28">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <h2 class="text-2xl font-black tracking-tight text-white font-outfit uppercase">Interactive Deliverables</h2>
+                    <div class="h-1.5 w-16 bg-gradient-to-r ${activeColors.textGrad} rounded-full mt-2"></div>
+                  </div>
+                  <div class="flex-1 h-[1px] bg-slate-800/40"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  ${projectsHtml || '<p class="text-slate-500 text-xs font-mono">// Awaiting telemetry inputs...</p>'}
+                </div>
+              </section>
+
+              <!-- EXPERIENCES -->
+              <section id="experience" class="space-y-8 pt-12 scroll-mt-28">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <h2 class="text-2xl font-black tracking-tight text-white font-outfit uppercase">Professional Timeline</h2>
+                    <div class="h-1.5 w-16 bg-gradient-to-r ${activeColors.textGrad} rounded-full mt-2"></div>
+                  </div>
+                  <div class="flex-1 h-[1px] bg-slate-800/40"></div>
+                </div>
+                <div class="space-y-4">
+                  ${experienceHtml || '<p class="text-slate-500 text-xs font-mono">// Seeding log modules...</p>'}
+                </div>
+              </section>
+
+              <!-- CONTACT / FOOTER -->
+              <footer id="contact" class="text-center pt-16 border-t border-slate-900/60 max-w-md mx-auto space-y-6 scroll-mt-28">
+                <h2 class="text-xs font-black text-white uppercase tracking-widest font-mono flex items-center justify-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse"></span>
+                  Let's Establish Sync
+                </h2>
+                <p class="text-xs text-slate-400 leading-relaxed font-light">Feel free to reach out via direct link. I'll get back as soon as telemetry compiles!</p>
+                <div class="flex flex-col items-center gap-4">
+                  ${portfolioState.contact?.email ? `<a href="mailto:${portfolioState.contact.email}" class="text-xs text-white font-semibold font-mono bg-slate-900 border border-slate-800 hover:border-[var(--primary)] px-6 py-3 rounded-xl transition duration-300 shadow-sm">${portfolioState.contact.email}</a>` : ""}
+                  <div class="flex justify-center gap-6 text-[10px] text-slate-500 font-bold font-mono">
+                    ${portfolioState.contact?.phone ? `<span>TEL: ${portfolioState.contact.phone}</span>` : ""}
+                    <span>&copy; ${new Date().getFullYear()} // SECURE HUB</span>
+                  </div>
+                </div>
+              </footer>
+            </div>
+          `;
+        } else if (template === "professional") {
+          // Sleek clean minimal contrast light mode template
+          compiledBody = `
+            <!-- STICKY HEADER NAV -->
+            <nav class="sticky top-0 z-50 bg-white/85 backdrop-blur-md border-b border-slate-100 px-8 py-6 flex justify-between items-center max-w-6xl mx-auto">
+              <a href="#" class="font-outfit font-black text-xl tracking-tight text-slate-900">
+                ${portfolioState.fullName || "Alex Rivera"}<span class="text-[var(--primary)]">.</span>
+              </a>
+              <div class="hidden md:flex gap-8 text-[11px] font-bold tracking-widest text-slate-400">
+                <a href="#about" class="hover:text-slate-900 transition">// ABOUT</a>
+                <a href="#skills" class="hover:text-slate-900 transition">// CAPABILITIES</a>
+                <a href="#projects" class="hover:text-slate-900 transition">// PROJECTS</a>
+                <a href="#experience" class="hover:text-slate-900 transition">// TIMELINE</a>
+              </div>
+              ${
+                portfolioState.contact?.email
+                  ? `
+                <a href="mailto:${portfolioState.contact.email}" class="text-[11px] font-bold tracking-widest text-slate-900 border-b-2 border-slate-900 hover:text-[var(--primary)] hover:border-[var(--primary)] transition pb-0.5">CONNECT</a>
+              `
+                  : ""
+              }
+            </nav>
+
+            <div class="max-w-5xl mx-auto px-6 pb-24 space-y-32 text-slate-800">
+              <!-- HERO BANNER -->
+              <header id="about" class="flex flex-col-reverse md:flex-row items-center justify-between gap-12 pt-20 pb-12 border-b border-slate-100">
+                <div class="space-y-6 max-w-2xl text-center md:text-left flex-1">
+                  <h1 class="text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-none font-outfit">
+                    ${portfolioState.fullName || "Alex Rivera"}
+                  </h1>
+                  <h2 class="text-xs font-black uppercase tracking-widest text-[var(--primary)] font-mono tracking-widest">[ ${portfolioState.targetRole || "Systems Engineer"} ]</h2>
+                  <p class="text-base md:text-lg text-slate-600 leading-relaxed max-w-xl font-medium font-serif italic">${portfolioState.bio || defaultBio}</p>
+                  
+                  <div class="flex flex-wrap justify-center md:justify-start items-center gap-4 pt-3">
+                    ${portfolioState.contact?.email ? `<a href="mailto:${portfolioState.contact.email}" class="bg-slate-900 hover:bg-[var(--hover)] text-white font-bold text-xs px-6 py-3.5 rounded-lg transition duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5">Direct Correspondence</a>` : ""}
+                    <div class="flex items-center gap-4 text-xs font-bold text-slate-400 font-mono">
+                      ${portfolioState.contact?.github ? `<a href="https://${portfolioState.contact.github}" target="_blank" class="hover:text-slate-900 transition-colors duration-200">GitHub</a>` : ""}
+                      ${portfolioState.contact?.linkedin ? `<a href="https://${portfolioState.contact.linkedin}" target="_blank" class="hover:text-slate-900 transition-colors duration-200">LinkedIn</a>` : ""}
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="h-36 w-36 rounded-2xl border border-slate-200 flex items-center justify-center font-black text-5xl text-[var(--primary)] bg-slate-50 shrink-0 shadow-sm relative overflow-hidden group">
+                  <div class="absolute inset-0 bg-slate-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span class="relative z-10 select-none transition duration-300 group-hover:scale-110 font-outfit">${(portfolioState.fullName || "A").charAt(0)}</span>
+                </div>
+              </header>
+
+              <!-- SKILLS -->
+              <section id="skills" class="grid grid-cols-1 md:grid-cols-3 gap-12 pt-8 scroll-mt-28">
+                <div class="md:col-span-1">
+                  <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 font-mono tracking-widest">// SKILLS MATRIX</h2>
+                  <div class="h-0.5 w-10 bg-[var(--primary)] rounded mt-2"></div>
+                </div>
+                <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  ${skillsHtml || '<p class="text-slate-400 text-xs font-mono">Loading telemetry...</p>'}
+                </div>
+              </section>
+
+              <!-- PROJECTS -->
+              <section id="projects" class="grid grid-cols-1 md:grid-cols-3 gap-12 pt-8 scroll-mt-28">
+                <div class="md:col-span-1">
+                  <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 font-mono tracking-widest">// PORTFOLIO GRID</h2>
+                  <div class="h-0.5 w-10 bg-[var(--primary)] rounded mt-2"></div>
+                </div>
+                <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  ${projectsHtml || '<p class="text-slate-400 text-xs font-mono">Loading modules...</p>'}
+                </div>
+              </section>
+
+              <!-- TIMELINE -->
+              <section id="experience" class="grid grid-cols-1 md:grid-cols-3 gap-12 pt-8 scroll-mt-28">
+                <div class="md:col-span-1">
+                  <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 font-mono tracking-widest">// WORK HISTORY</h2>
+                  <div class="h-0.5 w-10 bg-[var(--primary)] rounded mt-2"></div>
+                </div>
+                <div class="md:col-span-2 space-y-6">
+                  ${experienceHtml || '<p class="text-slate-400 text-xs font-mono">Loading timelines...</p>'}
+                </div>
+              </section>
+
+              <!-- FOOTER -->
+              <footer id="contact" class="text-center pt-16 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-slate-400 font-bold font-mono scroll-mt-28">
+                <span>&copy; ${new Date().getFullYear()} ${portfolioState.fullName || "Alex Rivera"} // ALL RIGHTS SECURED</span>
+                <div class="flex gap-6">
+                  ${portfolioState.contact?.email ? `<a href="mailto:${portfolioState.contact.email}" class="hover:text-[var(--primary)] transition-colors duration-200">${portfolioState.contact.email}</a>` : ""}
+                  ${portfolioState.contact?.phone ? `<span>${portfolioState.contact.phone}</span>` : ""}
+                </div>
+              </footer>
+            </div>
+          `;
+        } else {
+          // Terminal Cyberpunk mono fira grid
+          compiledBody = `
+            <!-- STICKY HEADER NAV -->
+            <nav class="sticky top-0 z-50 bg-black border-b border-[#00ffcc]/30 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+              <a href="#" class="text-white hover:text-[#00ffcc] font-black text-sm tracking-widest flex items-center gap-2">
+                <span class="animate-pulse text-[#00ffcc]">&gt;</span>
+                ${(portfolioState.fullName || "Alex Rivera").toUpperCase()}
+              </a>
+              <div class="flex flex-wrap justify-center gap-4 text-[10px] font-bold tracking-widest text-[#00ffcc]/60">
+                <a href="#about" class="hover:text-white hover:bg-[#00ffcc]/10 px-2 py-1 transition">[ SYS_INIT ]</a>
+                <a href="#skills" class="hover:text-white hover:bg-[#00ffcc]/10 px-2 py-1 transition">[ SYS_TECH ]</a>
+                <a href="#projects" class="hover:text-white hover:bg-[#00ffcc]/10 px-2 py-1 transition">[ SYS_PROD ]</a>
+                <a href="#experience" class="hover:text-white hover:bg-[#00ffcc]/10 px-2 py-1 transition">[ SYS_LOGS ]</a>
+              </div>
+              ${
+                portfolioState.contact?.email
+                  ? `
+                <a href="mailto:${portfolioState.contact.email}" class="text-[10px] bg-[#00ffcc]/20 border border-[#00ffcc] hover:bg-[#00ffcc] hover:text-black text-[#00ffcc] font-bold px-3 py-1 transition-all duration-200">[ SYNC ]</a>
+              `
+                  : ""
+              }
+            </nav>
+
+            <div class="max-w-4xl mx-auto px-6 pb-24 space-y-20 text-[#00ffcc] font-mono">
+              
+              <!-- TERMINAL HUD DASHBOARD WIDGETS -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-[10px] text-[#00ffcc]/80 border border-[#00ffcc]/35 p-4 rounded bg-black/60 font-mono pt-6">
+                <div>
+                  <span class="text-slate-500">// SYS_STATUS:</span> <span class="font-bold text-emerald-400">NOMINAL</span>
+                </div>
+                <div>
+                  <span class="text-slate-500">// INTEGRITY:</span> <span class="font-bold text-emerald-400">100% SECURE</span>
+                </div>
+                <div>
+                  <span class="text-slate-500">// ACCESS:</span> <span class="font-bold text-purple-400">USER_LEVEL_0</span>
+                </div>
+                <div>
+                  <span class="text-slate-500">// LINK:</span> <span class="font-bold text-[#00ffcc] animate-pulse">ACTIVE_PING</span>
+                </div>
+              </div>
+
+              <!-- TERMINAL HERO -->
+              <header id="about" class="border border-[#00ffcc]/35 p-6 rounded bg-black/85 space-y-4 shadow-[0_0_20px_rgba(0,255,204,0.08)] relative overflow-hidden pt-12">
+                <div class="absolute right-3 top-3 w-2 h-2 rounded-full bg-[#00ffcc] animate-ping"></div>
+                <div class="absolute right-3 top-3 w-2 h-2 rounded-full bg-[#00ffcc]"></div>
+                
+                <div class="flex justify-between items-center text-[10px] text-slate-500 border-b border-[#00ffcc]/20 pb-3">
+                  <span>SYSTEM_LOAD: COMPILING // NETWORK_SECURE: TRUE</span>
+                  <span>NODE_ADDR: 127.0.0.1</span>
+                </div>
+                
+                <div class="flex flex-col-reverse md:flex-row justify-between md:items-center gap-6 pt-2">
+                  <div class="space-y-4 flex-1">
+                    <h1 class="text-3xl md:text-4xl font-extrabold uppercase leading-none tracking-tight text-white">
+                      &gt; ${(portfolioState.fullName || "Alex Rivera").toUpperCase()}<span class="animate-pulse text-[#00ffcc] font-black">_</span>
+                    </h1>
+                    <h2 class="text-xs font-semibold uppercase text-purple-400">[ CONFIG_KEY: ${(portfolioState.targetRole || "Developer").toUpperCase()} ]</h2>
+                    <p class="text-xs leading-relaxed text-slate-350 max-w-xl font-mono">// BIO_ABSTRACT: ${portfolioState.bio || defaultBio}</p>
+                  </div>
+                  
+                  <div class="h-28 w-28 border-2 border-[#00ffcc]/35 bg-black rounded flex items-center justify-center font-black text-4xl text-[#00ffcc] hover:bg-[#00ffcc]/10 transition duration-300 shrink-0 shadow-[0_0_15px_rgba(0,255,204,0.15)] relative group">
+                    <div class="absolute inset-0 bg-[#00ffcc]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    [${(portfolioState.fullName || "A").charAt(0)}]
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap gap-4 pt-4 text-[10px] font-bold border-t border-[#00ffcc]/15">
+                  ${portfolioState.contact?.email ? `<a href="mailto:${portfolioState.contact.email}" class="text-black bg-[#00ffcc] hover:bg-white hover:shadow-[0_0_15px_rgba(255,255,255,0.6)] px-4 py-2 rounded transition-all duration-200">[ TERMINAL_CONNECT ]</a>` : ""}
+                  ${portfolioState.contact?.github ? `<a href="https://${portfolioState.contact.github}" target="_blank" class="border border-[#00ffcc]/50 text-[#00ffcc] hover:bg-[#00ffcc]/10 px-4 py-2 rounded transition">[ REPOS_STATION ]</a>` : ""}
+                </div>
+              </header>
+
+              <!-- CHIPS GRID -->
+              <section id="skills" class="space-y-6 pt-6 scroll-mt-28">
+                <h2 class="text-xs font-black tracking-widest text-[#00ffcc] border-b border-[#00ffcc]/20 pb-2 uppercase flex items-center gap-2">
+                  <span class="animate-pulse">&gt;</span> SYSTEM_CAPABILITIES_MANIFEST
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  ${skillsHtml || '<p class="text-slate-500 text-xs font-mono">// Null telemetry fields loaded.</p>'}
+                </div>
+              </section>
+
+              <!-- DELIVERABLES -->
+              <section id="projects" class="space-y-6 pt-6 scroll-mt-28">
+                <h2 class="text-xs font-black tracking-widest text-[#00ffcc] border-b border-[#00ffcc]/20 pb-2 uppercase flex items-center gap-2">
+                  <span class="animate-pulse">&gt;</span> COMPILED_PRODUCT_DELIVERABLES
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  ${projectsHtml || '<p class="text-slate-500 text-xs font-mono">// Null database telemetry records.</p>'}
+                </div>
+              </section>
+
+              <!-- TIMELINE -->
+              <section id="experience" class="space-y-6 pt-6 scroll-mt-28">
+                <h2 class="text-xs font-black tracking-widest text-[#00ffcc] border-b border-[#00ffcc]/20 pb-2 uppercase flex items-center gap-2">
+                  <span class="animate-pulse">&gt;</span> HISTORICAL_LOG_TIMELINES
+                </h2>
+                <div class="space-y-2">
+                  ${experienceHtml || '<p class="text-slate-500 text-xs font-mono">// Null experience segments compiled.</p>'}
+                </div>
+              </section>
+
+              <!-- CYBER FOOTER -->
+              <footer id="contact" class="border-t border-[#00ffcc]/25 pt-12 text-center text-[10px] text-slate-500 space-y-4 scroll-mt-28">
+                <div>CYBERNETIC_SECURE_NODE // SHIELD_ACTIVE // METRIC_OK</div>
+                <div class="flex justify-center gap-6 text-[10px]">
+                  ${portfolioState.contact?.email ? `<a href="mailto:${portfolioState.contact.email}" class="hover:text-white transition-colors">[ ${portfolioState.contact.email} ]</a>` : ""}
+                  ${portfolioState.contact?.phone ? `<span>[ TEL: ${portfolioState.contact.phone} ]</span>` : ""}
+                </div>
+                <div class="text-[9px] opacity-70">&copy; ${new Date().getFullYear()} SECURE_STATION</div>
+              </footer>
+            </div>
+          `;
+        }
+
+        // FULL SINGLE FILE HTML TEMPLATE COMPILING BOTH CSS, STYLING ENGINE AND DESIGN THEMES
+        const htmlDoc = `
+          <!DOCTYPE html>
+          <html lang="en" class="scroll-smooth">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${portfolioState.fullName || "Alex Rivera"} | Personal Digital Hub</title>
+            <script src="https://cdn.tailwindcss.com"><\/script>
+            <script>
+              tailwind.config = {
+                theme: {
+                  extend: {
+                    colors: {
+                      "brand-dark": "${template === "professional" ? "#ffffff" : template === "hacker" ? "#000000" : "#090d16"}",
+                    }
+                  }
+                }
+              }
+            <\/script>
+            <style>
+              @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap');
+              
+              :root {
+                --primary: ${activeColors.primary};
+                --primary-glow: ${activeColors.glow};
+                --hover: ${activeColors.hover};
+              }
+
+              body {
+                ${activeFontStack}
+                background-color: ${template === "professional" ? "#ffffff" : template === "hacker" ? "#000000" : "#090d16"};
+              }
+              
+              ::-webkit-scrollbar {
+                width: 6px;
+              }
+              ::-webkit-scrollbar-thumb {
+                background: ${template === "hacker" ? "#00ffcc" : "var(--primary)"};
+                border-radius: 10px;
+              }
+              ::-webkit-scrollbar-track {
+                background: transparent;
+              }
+              
+              .glass-glow-effect {
+                box-shadow: 0 0 40px var(--primary-glow);
+              }
+            </style>
+          </head>
+          <body class="${template === "professional" ? "text-slate-800" : "text-slate-200"} antialiased relative min-h-screen selection:bg-${theme}-950/80 overflow-x-hidden">
+            ${
+              template === "glassmorphic"
+                ? `
+              <!-- Glowing floating elements in the dark theme -->
+              <div class="fixed top-20 left-10 w-96 h-96 rounded-full bg-gradient-to-tr ${activeColors.textGrad} opacity-[0.03] blur-[100px] glass-glow-effect pointer-events-none"></div>
+              <div class="fixed bottom-20 right-10 w-[500px] h-[500px] rounded-full bg-gradient-to-br ${activeColors.textGrad} opacity-[0.03] blur-[120px] glass-glow-effect pointer-events-none"></div>
+              
+              <!-- Micro-Grid Texture -->
+              <div class="fixed inset-0 pointer-events-none z-0">
+                <div class="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-35"></div>
+              </div>
+            `
+                : ""
+            }
+
+            ${
+              template === "hacker"
+                ? `
+              <!-- CRT Scanline retro overlay -->
+              <div class="fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.15)_50%)] bg-[length:100%_4px] z-50 opacity-[0.2]"></div>
+              <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,255,204,0.03)_0%,rgba(0,0,0,0.25)_100%)] z-40"></div>
+            `
+                : ""
+            }
+
+            ${compiledBody}
+          </body>
+          </html>
+        `;
+
+        return htmlDoc;
+      }
+
+      // Update Preview Sandboxed frame
+      function updateLivePreview() {
+        const docHtml = compileHTMLContent();
+
+        const iframe = document.getElementById("preview-iframe");
+        if (iframe) {
+          const doc = iframe.contentDocument || iframe.contentWindow.document;
+          doc.open();
+          doc.write(docHtml);
+          doc.close();
+        }
+      }
+
+      // Sync and Save to user profile database
+      async function savePortfolio(quiet = false) {
+        syncStateFromFields();
+
+        const btn = document.getElementById("btn-save-db");
+        const origText = btn.innerHTML;
+
+        if (!quiet) {
+          btn.disabled = true;
+          btn.innerHTML = `<span class="h-3 w-3 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></span> <span>Syncing...</span>`;
+        }
+
+        try {
+          const res = await fetchWithAuth("/api/portfolio", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(portfolioState),
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            document.getElementById("floating-status").textContent =
+              "All modifications saved and synced in session DB.";
+            if (!quiet) alert("Portfolio configuration saved successfully!");
+          } else {
+            if (!quiet)
+              alert(
+                "Sync failed: " + (data.error || "Server validation rejected."),
+              );
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          console.error("Save failure:", err);
+          if (!quiet) alert("Network failed to establish sync.");
+        } finally {
+          if (!quiet) {
+            btn.disabled = false;
+            btn.innerHTML = origText;
+          }
+        }
+      }
+
+      // SINGLE FILE DOWNLOAD EXPORTER
+      function exportStandaloneHTML() {
+        // Compile entire layout
+        syncStateFromFields();
+        const code = compileHTMLContent();
+
+        // Save to DB silently to ensure consistency
+        savePortfolio(true);
+
+        const filename = `${portfolioState.fullName.toLowerCase().replace(/\s+/g, "-")}-portfolio.html`;
+        const blob = new Blob([code], { type: "text/html;charset=utf-8;" });
+
+        // Trigger browser direct download
+        const link = document.createElement("a");
+        if (link.download !== undefined) {
+          const url = URL.createObjectURL(blob);
+          link.setAttribute("href", url);
+          link.setAttribute("download", filename);
+          link.style.visibility = "hidden";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          document.getElementById("floating-status").textContent =
+            "Portability package exported successfully!";
+        }
+      }
+
+      // Manage Responsive Previews
+      function setPreviewDevice(device) {
+        const container = document.getElementById("preview-frame-container");
+        const aspectLabel = document.getElementById("preview-aspect");
+
+        const btnDesktop = document.getElementById("btn-device-desktop");
+        const btnTablet = document.getElementById("btn-device-tablet");
+        const btnMobile = document.getElementById("btn-device-mobile");
+
+        btnDesktop.className =
+          "px-3 py-1.5 rounded-lg hover:bg-slate-800/60 transition-all duration-200";
+        btnTablet.className =
+          "px-3 py-1.5 rounded-lg hover:bg-slate-800/60 transition-all duration-200";
+        btnMobile.className =
+          "px-3 py-1.5 rounded-lg hover:bg-slate-800/60 transition-all duration-200";
+
+        if (device === "desktop") {
+          container.style.maxWidth = "100%";
+          aspectLabel.textContent = "Desktop Mode (100% Width)";
+          btnDesktop.className =
+            "px-3 py-1.5 rounded-lg bg-slate-800 text-white shadow transition-all duration-200";
+        } else if (device === "tablet") {
+          container.style.maxWidth = "768px";
+          aspectLabel.textContent = "Tablet Mode (768px Width)";
+          btnTablet.className =
+            "px-3 py-1.5 rounded-lg bg-slate-800 text-white shadow transition-all duration-200";
+        } else if (device === "mobile") {
+          container.style.maxWidth = "375px";
+          aspectLabel.textContent = "Mobile Mode (375px Width)";
+          btnMobile.className =
+            "px-3 py-1.5 rounded-lg bg-slate-800 text-white shadow transition-all duration-200";
+        }
+
+        // Force repaint preview
+        updateLivePreview();
+      }
+
+      // Settings drawers keys handlers
+      function toggleSettingsDrawer() {
+        const dialog = document.getElementById("settings-dialog");
+        if (dialog.classList.contains("hidden")) {
+          dialog.classList.remove("hidden");
+          dialog.classList.add("flex");
+
+          // Pop keys
+          document.getElementById("dialog-gemini-key").value =
+            localStorage.getItem("x-gemini-key") || "";
+          document.getElementById("dialog-openai-key").value =
+            localStorage.getItem("x-openai-key") || "";
+        } else {
+          dialog.classList.remove("flex");
+          dialog.classList.add("hidden");
+        }
+      }
+      function loadKeysFromLocalStorage() {
+        // Inherit keys from dashboard interceptors
+        if (
+          !localStorage.getItem("x-gemini-key") &&
+          !localStorage.getItem("x-openai-key")
+        ) {
+          // If unconfigured locally, write placeholder to prevent nulls
+          console.log("[AI Engine] Key parameters initialized.");
+        }
+      }
+      function saveKeys() {
+        const gemini = document.getElementById("dialog-gemini-key").value;
+        const openai = document.getElementById("dialog-openai-key").value;
+
+        localStorage.setItem("x-gemini-key", gemini);
+        localStorage.setItem("x-openai-key", openai);
+
+        alert("API credentials saved securely in local storage drawer.");
+        toggleSettingsDrawer();
+      }
+    </script>
+  </body>
+</html>

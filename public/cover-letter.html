@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResumeStudio X | Cover Letter Workstation</title>
+    <script>
+      // Verify login before mounting DOM nodes
+      (function () {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          window.location.href = "/login.html";
+        }
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            width: { a4: "210mm" },
+            minHeight: { a4: "297mm" },
+            colors: {
+              "brand-dark": "#0f172a",
+              "brand-slate": "#475569",
+              "brand-light": "#f8fafc",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap');
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      /* Typography selection classes */
+      .font-sans-inter { font-family: 'Inter', sans-serif !important; }
+      .font-sans-outfit { font-family: 'Outfit', sans-serif !important; }
+      .font-serif-times { font-family: "Times New Roman", Times, serif !important; }
+      .font-serif-georgia { font-family: Georgia, serif !important; }
+      .font-serif-playfair { font-family: 'Playfair Display', serif !important; }
+      .font-mono-fira { font-family: 'Fira Code', monospace !important; }
+
+      .fade-in {
+        animation: blockSnap 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      @keyframes blockSnap {
+        from {
+          opacity: 0;
+          transform: scale(0.98) translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      /* Custom canvas attributes synced with control bar */
+      #letter-paper {
+        padding: var(--canvas-margin, 20mm);
+        font-size: var(--canvas-font-size, 11px);
+        transition: all 0.3s ease;
+      }
+
+      /* Cover Letter Template Styles */
+      .tmpl-professional {
+        border-top: 4px solid var(--theme-accent, #4f46e5);
+      }
+      .tmpl-professional #paper-header {
+        border-bottom: 2.5px solid var(--theme-accent, #4f46e5);
+      }
+      
+      .tmpl-creative {
+        position: relative;
+        overflow: hidden;
+      }
+      .tmpl-creative::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: linear-gradient(90deg, var(--theme-accent, #4f46e5), #a855f7, #ec4899);
+      }
+      .tmpl-creative #paper-header {
+        border-bottom: 1.5px dashed #cbd5e1;
+        padding-bottom: 1.2rem;
+      }
+
+      .tmpl-minimalist {
+        border: none !important;
+      }
+      .tmpl-minimalist #paper-header {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 1.2rem;
+        margin-bottom: 1.8rem;
+      }
+      .tmpl-minimalist #view-contacts-container {
+        text-align: center;
+        justify-content: center;
+      }
+
+      @media print {
+        body {
+          background: white;
+          color: black;
+          overflow: visible !important;
+        }
+        header,
+        aside,
+        footer {
+          display: none !important;
+        }
+        main {
+          padding: 0 !important;
+          margin: 0 !important;
+          overflow: visible !important;
+          background: white !important;
+        }
+        #letter-paper {
+          border: none !important;
+          box-shadow: none !important;
+          padding: var(--canvas-margin, 20mm) !important;
+          width: 210mm !important;
+          min-height: 297mm !important;
+          margin: 0 auto !important;
+          transform: none !important;
+        }
+      }
+
+      /* Responsive workstation layout */
+      @media (max-width: 1280px) {
+        .workstation-sidebar {
+          width: 360px;
+          padding: 1.5rem;
+        }
+        .workstation-preview {
+          padding: 2rem;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .main-workspace {
+          flex-direction: column;
+        }
+        .workstation-sidebar {
+          width: 100%;
+          position: relative;
+          top: 0;
+          height: auto;
+        }
+        .workstation-preview {
+          height: auto;
+          min-height: auto;
+          padding: 1.5rem;
+        }
+        .workstation-actions {
+          position: static;
+          margin: 1rem auto 2rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        header {
+          padding: 1rem !important;
+        }
+        header .max-w-7xl {
+          flex-direction: column !important;
+          gap: 1rem !important;
+        }
+        header .flex {
+          width: 100% !important;
+          justify-content: center !important;
+        }
+        #letter-paper {
+          width: 100% !important;
+          min-height: auto !important;
+        }
+        #paper-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+        }
+        #header-text-block {
+          max-width: 100% !important;
+        }
+        .workstation-actions {
+          width: 100% !important;
+          padding: 0 1rem !important;
+        }
+      }
+
+      @media (max-width: 640px) {
+        header {
+          padding: 0.75rem !important;
+        }
+        header .max-w-7xl {
+          flex-direction: column !important;
+          gap: 0.75rem !important;
+        }
+        header .flex {
+          flex-wrap: wrap !important;
+          width: 100% !important;
+          justify-content: center !important;
+          gap: 0.5rem !important;
+        }
+        header a {
+          padding: 0.75rem 1rem !important;
+          font-size: 0.75rem !important;
+        }
+        #letter-paper {
+          padding: 14mm !important;
+          font-size: 10px !important;
+          width: 100% !important;
+        }
+        .workstation-actions {
+          width: calc(100% - 2rem) !important;
+          flex-direction: column;
+          gap: 0.75rem;
+          padding: 0 1rem !important;
+        }
+        .workstation-actions button {
+          width: 100%;
+          padding: 0.75rem !important;
+          font-size: 0.75rem !important;
+        }
+        .workstation-sidebar {
+          width: 100% !important;
+          padding: 1rem !important;
+        }
+        .workstation-preview {
+          width: 100% !important;
+          padding: 1rem !important;
+        }
+        main .max-w-7xl {
+          padding: 0 !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col justify-between overflow-x-hidden font-sans">
+
+    <!-- Premium Glassmorphic Page Loader -->
+    <div id="page-loader" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-md transition-all duration-500 ease-out opacity-100">
+      <div class="relative flex items-center justify-center">
+        <div class="absolute w-24 h-24 bg-indigo-500/20 rounded-full blur-xl animate-pulse"></div>
+        <div class="w-16 h-16 border-4 border-slate-800 border-t-indigo-500 rounded-full animate-spin"></div>
+      </div>
+      <div class="mt-6 text-center">
+        <h3 class="text-sm font-black tracking-widest text-white uppercase font-outfit">ResumeStudio <span class="text-indigo-500">X</span></h3>
+        <p class="text-[10px] text-slate-400 font-mono mt-1 animate-pulse uppercase tracking-wider">Mounting Design Grid...</p>
+      </div>
+    </div>
+
+    <!-- Top Design Control Station Dashboard -->
+    <header class="w-full bg-[#0d1220] border-b border-slate-800/80 px-6 py-4 z-40 sticky top-0 shadow-lg backdrop-blur-md bg-opacity-95">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 font-sans text-xs">
+        
+        <!-- Document Sync Status & Navigation -->
+        <div class="flex items-center gap-4">
+          <a href="index.html" class="flex items-center gap-1.5 px-3 py-1.5 bg-[#12192d] hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white rounded-xl transition duration-300 font-bold tracking-wide">
+            🏠 Home
+          </a>
+          <a href="Resume.html" class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-650/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 rounded-xl transition duration-300 font-bold tracking-wide">
+            📄 Resume Builder
+          </a>
+          <a href="portfolio.html" class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-650/20 border border-indigo-500/20 text-indigo-400 hover:text-indigo-300 rounded-xl transition duration-300 font-bold tracking-wide">
+            🌐 Portfolio Builder
+          </a>
+          <div class="w-px h-6 bg-slate-800"></div>
+          <div class="flex items-center gap-3">
+            <div class="h-8 w-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-white text-sm">
+              L
+            </div>
+            <div>
+              <h2 class="font-extrabold text-sm tracking-tight text-white">CoverLetter X Workstation</h2>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span id="sync-indicator-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span id="sync-indicator-text" class="text-[10px] font-bold text-slate-400 font-mono uppercase tracking-wider">Cloud Connected</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout Controls -->
+        <div class="flex flex-wrap items-center gap-6">
+          <!-- Accent Swatches -->
+          <div class="flex items-center gap-2 bg-[#12192d] px-3 py-1.5 rounded-xl border border-slate-800">
+            <span class="font-bold text-[10px] text-slate-400 font-mono uppercase">ACCENT:</span>
+            <div class="flex items-center gap-1.5">
+              <button onclick="updateThemeAccent('#4f46e5')" class="w-3.5 h-3.5 rounded-full bg-indigo-600 border border-slate-800 active:scale-90 transition cursor-pointer"></button>
+              <button onclick="updateThemeAccent('#10b981')" class="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-slate-800 active:scale-90 transition cursor-pointer"></button>
+              <button onclick="updateThemeAccent('#e11d48')" class="w-3.5 h-3.5 rounded-full bg-rose-600 border border-slate-800 active:scale-90 transition cursor-pointer"></button>
+              <button onclick="updateThemeAccent('#d97706')" class="w-3.5 h-3.5 rounded-full bg-amber-600 border border-slate-800 active:scale-90 transition cursor-pointer"></button>
+              <input type="color" id="accent-color-picker" onchange="updateThemeAccent(this.value)" class="w-4 h-4 rounded-full bg-transparent border-0 outline-none cursor-pointer select-none p-0">
+            </div>
+          </div>
+
+          <!-- Font Selector -->
+          <div class="flex items-center gap-2 bg-[#12192d] px-3 py-1 rounded-xl border border-slate-800">
+            <span class="font-bold text-[10px] text-slate-400 font-mono uppercase">FONT:</span>
+            <select id="canvas-font-selector" onchange="updateThemeFont(this.value)" class="bg-transparent border-0 outline-none font-bold text-slate-200 cursor-pointer pr-1">
+              <option value="font-sans-inter" class="bg-slate-900 text-slate-100">Inter Sans</option>
+              <option value="font-sans-outfit" class="bg-slate-900 text-slate-100">Outfit Custom</option>
+              <option value="font-serif-times" class="bg-slate-900 text-slate-100">Times Serif</option>
+              <option value="font-serif-georgia" class="bg-slate-900 text-slate-100">Georgia Formal</option>
+              <option value="font-serif-playfair" class="bg-slate-900 text-slate-100">Playfair Bold</option>
+              <option value="font-mono-fira" class="bg-slate-900 text-slate-100">Fira Technical</option>
+            </select>
+          </div>
+
+          <!-- Spacing Sliders -->
+          <div class="flex items-center gap-4 bg-[#12192d] px-3 py-1.5 rounded-xl border border-slate-800 text-[10px]">
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-slate-400 font-mono uppercase">MARGINS:</span>
+              <input type="range" min="10" max="30" value="20" id="margin-slider" oninput="updateThemeMargin(this.value)" class="w-16 accent-indigo-500 bg-slate-800 rounded-lg cursor-pointer h-1">
+            </div>
+            <div class="w-px h-4 bg-slate-800"></div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-slate-400 font-mono uppercase">SCALE:</span>
+              <input type="range" min="9" max="15" step="0.5" value="11" id="font-scale-slider" oninput="updateThemeFontScale(this.value)" class="w-16 accent-indigo-500 bg-slate-800 rounded-lg cursor-pointer h-1">
+            </div>
+          </div>
+
+          <!-- View Zoom -->
+          <div class="flex items-center gap-2 bg-[#12192d] px-3 py-1.5 rounded-xl border border-slate-800 text-[10px]">
+            <span class="font-bold text-slate-400 font-mono uppercase">ZOOM:</span>
+            <input type="range" min="70" max="130" value="95" id="zoom-slider" oninput="updateThemeZoom(this.value)" class="w-20 accent-indigo-500 bg-slate-800 rounded-lg cursor-pointer h-1">
+            <span id="zoom-value" class="font-mono font-bold text-slate-200">95%</span>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="main-workspace flex flex-1 w-full min-h-[calc(100vh-160px)] items-stretch relative">
+      
+      <!-- Left Forms Sidebar -->
+      <aside class="workstation-sidebar w-[430px] bg-[#090d16] border-r border-slate-900 p-6 flex flex-col overflow-y-auto space-y-6 h-[calc(100vh-80px)] sticky top-20 shadow-2xl shrink-0">
+        
+        <!-- AI Blueprint Optimizer -->
+        <div class="bg-indigo-950/30 border border-indigo-500/20 rounded-2xl p-4 space-y-3.5 backdrop-blur-sm">
+          <div class="flex items-center gap-2 text-indigo-400">
+            <span class="text-sm">🤖</span>
+            <span class="text-[10px] font-mono font-bold tracking-widest uppercase">AI Cover Letter Optimizer</span>
+          </div>
+          <div class="space-y-2">
+            <input
+              type="text"
+              id="ai-target-role"
+              placeholder="Target Role (e.g., Full Stack Engineer)"
+              class="w-full bg-slate-950/70 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-indigo-500 transition"
+            />
+            <input
+              type="text"
+              id="ai-target-co"
+              placeholder="Company Name (e.g., Niftel)"
+              class="w-full bg-slate-950/70 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-indigo-500 transition"
+            />
+            <button
+              type="button"
+              id="ai-letter-btn"
+              onclick="triggerLetterAIGeneration()"
+              class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-xs py-3 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-1.5"
+            >
+              <span>Draft Letter via AI</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sync Actions Moved to Floating Action Dock (Bottom Right) -->
+
+        <!-- 01 / Design Layout & Sender Info -->
+        <div class="space-y-3">
+          <span class="text-[10px] font-mono font-bold tracking-widest text-slate-500 uppercase">01 / LAYOUT & SENDER INFO</span>
+          <div class="space-y-3 bg-[#0d1220] p-4 rounded-xl border border-slate-850">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">Design Framework Style</label>
+              <select
+                id="template-picker"
+                onchange="changeActiveTemplate(this.value)"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-indigo-400 font-bold cursor-pointer outline-none transition"
+              >
+                <option value="tmpl-professional">Professional Formal</option>
+                <option value="tmpl-creative">Creative Gradient</option>
+                <option value="tmpl-minimalist">Elegant Minimalist</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Full Name</label>
+              <input type="text" id="input-sender-name" value="Shreya Maurya" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition font-semibold">
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Professional Focus</label>
+              <input type="text" id="input-sender-role" value="Full Stack Developer" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition font-semibold">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Email</label>
+                <input type="email" id="input-sender-email" value="contact@domain.local" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Phone</label>
+                <input type="text" id="input-sender-phone" value="+91 0000000000" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Location</label>
+              <input type="text" id="input-sender-location" value="Lucknow, India" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition">
+            </div>
+          </div>
+        </div>
+
+        <!-- 02 / Recipient Details -->
+        <div class="space-y-3">
+          <span class="text-[10px] font-mono font-bold tracking-widest text-slate-500 uppercase">02 / RECIPIENT & JOB DETAILS</span>
+          <div class="space-y-3 bg-[#0d1220] p-4 rounded-xl border border-slate-850">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Company Entity</label>
+              <input type="text" id="input-company-name" value="Niftel Communication" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition font-semibold">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Hiring Contact Name</label>
+                <input type="text" id="input-recipient-name" value="Hiring Team Manager" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Recipient Title</label>
+                <input type="text" id="input-recipient-title" value="Lead Engineering Recruiter" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Target Job Title</label>
+                <input type="text" id="input-job-title" value="Full Stack Developer" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Job ID (Optional)</label>
+                <input type="text" id="input-job-id" value="N-8942" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Company Address</label>
+              <input type="text" id="input-company-address" value="Tech Hub District, Sector 62, India" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition">
+            </div>
+          </div>
+        </div>
+
+        <!-- 03 / Letter Body Paragraphs -->
+        <div class="space-y-3">
+          <span class="text-[10px] font-mono font-bold tracking-widest text-slate-500 uppercase">03 / LETTER BODY PARAGRAPHS</span>
+          <div class="space-y-4 bg-[#0d1220] p-4 rounded-xl border border-slate-850">
+            
+            <!-- Validation errors container -->
+            <div id="validation-errors" class="hidden bg-rose-950/20 border border-rose-500/20 rounded-xl p-3 text-[10px] text-rose-400 space-y-1"></div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Introductory Hook</label>
+              <textarea
+                id="input-body-intro"
+                rows="3"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 outline-none h-20 resize-none focus:border-slate-700 transition"
+              >I am writing to express my eager interest in the Full Stack Developer opening. With a solid foundation in software engineering pipelines and data environments, I am excited to help scale your modern technical ecosystems.</textarea>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Core Pitch Stack</label>
+              <textarea
+                id="input-body-core"
+                rows="5"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 outline-none h-28 resize-none focus:border-slate-700 transition"
+              >During my time engineering responsive layouts, I have specialized in optimizing full-stack performance stacks using modern web architecture frameworks. My focus is always centered heavily around ensuring rapid web paint updates, isolating API endpoints, and organizing structured database collections to support fluid end-user interfaces seamlessly.</textarea>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Closing Intent</label>
+              <textarea
+                id="input-body-close"
+                rows="3"
+                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 outline-none h-20 resize-none focus:border-slate-700 transition"
+              >Thank you for your time and strategic consideration. I look forward to discussing how my core capabilities align with the development roadmaps and engineering benchmarks of your organization.</textarea>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Signature Sign-off</label>
+              <input type="text" id="input-signature" value="Shreya Maurya" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-slate-700 transition font-semibold">
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- Right Blueprint Drafting Space -->
+      <main class="workstation-preview flex-1 bg-[#090b10] p-12 overflow-y-auto flex justify-center items-start h-[calc(100vh-85px)] relative">
+        <!-- Drafting table grid texture -->
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#121824_1px,transparent_1px),linear-gradient(to_bottom,#121824_1px,transparent_1px)] bg-[size:30px_30px] opacity-[0.4] pointer-events-none"></div>
+
+        <!-- Scaled Paper Canvas container -->
+        <div id="canvas-scale-container" class="transition-all duration-300 origin-top scale-[0.95] flex items-center justify-center">
+          <div
+            id="letter-paper"
+            class="tmpl-professional w-a4 min-h-a4 bg-white text-slate-800 shadow-2xl rounded-sm transition-all font-sans-inter"
+            style="--theme-accent: #4f46e5; --canvas-font-size: 11px; --canvas-margin: 20mm;"
+          >
+            <header class="pb-4 mb-5 flex justify-between items-start border-b" id="paper-header">
+              <div class="space-y-1.5 max-w-[72%] transition-all" id="header-text-block">
+                <h1 id="view-sender-name" class="text-3xl font-extrabold tracking-tight uppercase text-indigo-600 transition-colors duration-300">
+                  Shreya Maurya
+                </h1>
+                <p id="view-sender-role" class="text-xs font-bold text-slate-900 tracking-wide uppercase">
+                  Full Stack Developer
+                </p>
+                <div id="view-contacts-container" class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-slate-500 font-semibold mt-1">
+                  <span id="view-sender-location">📍 Lucknow, India</span>
+                  <span class="text-slate-300">|</span>
+                  <span id="view-sender-phone">📞 +91 0000000000</span>
+                  <span class="text-slate-300">|</span>
+                  <span id="view-sender-email">✉️ contact@domain.local</span>
+                </div>
+              </div>
+            </header>
+
+            <div class="text-xs space-y-4 text-brand-dark font-semibold mb-8">
+              <p id="view-date" class="font-mono text-slate-400">May 21, 2026</p>
+              <div class="space-y-0.5 border-l-2 border-slate-100 pl-3">
+                <p id="view-recipient-name" class="font-bold text-slate-900">Hiring Team Manager</p>
+                <p id="view-recipient-title" class="text-slate-500 text-[10px]">Lead Engineering Recruiter</p>
+                <p id="view-company-name" class="text-brand-slate">Niftel Communication</p>
+                <p id="view-company-address" class="text-[10px] text-slate-400 font-normal">Tech Hub District, Sector 62, India</p>
+                <p id="view-job-id" class="text-[9px] font-mono text-slate-400 font-bold mt-1">Job ID: N-8942</p>
+              </div>
+            </div>
+
+            <article class="text-xs text-slate-700 space-y-5 leading-relaxed font-medium">
+              <p>
+                Dear <span id="view-salutation" class="font-bold text-slate-900">Hiring Team Manager</span>,
+              </p>
+              
+              <p id="view-body-intro" class="whitespace-pre-line text-justify leading-relaxed"></p>
+              
+              <p id="view-body-core" class="whitespace-pre-line text-justify leading-relaxed"></p>
+              
+              <p id="view-body-close" class="whitespace-pre-line text-justify leading-relaxed"></p>
+
+              <div class="pt-8 space-y-10">
+                <p class="text-slate-500 font-semibold">Sincerely,</p>
+                <div>
+                  <p id="view-signature-name" class="font-extrabold text-slate-900 text-sm tracking-tight border-t border-slate-100 pt-2 inline-block min-w-[120px]">
+                    Shreya Maurya
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </main>
+
+      <!-- Sticky Floating Action Dock (Bottom Right) -->
+      <div class="workstation-actions fixed bottom-6 right-6 z-[49] flex items-center gap-3 bg-[#0d1220]/90 backdrop-blur-md border border-slate-800/80 p-3 rounded-2xl shadow-2xl shadow-indigo-950/50 hover:border-slate-700/80 transition-all duration-300">
+        <button
+          type="button"
+          onclick="saveActiveLetter()"
+          class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
+        >
+          <span>💾 Save Cloud</span>
+        </button>
+        <button
+          type="button"
+          onclick="downloadLetterPDF()"
+          class="bg-[#121b2f] hover:bg-[#1a2642] border border-slate-800 text-indigo-400 font-bold text-xs px-5 py-3 rounded-xl transition shadow-md flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
+        >
+          <span>📄 Export PDF</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Active Engine Drivers Matrix script -->
+    <script>
+      let activeLetterId = null;
+
+      // Global Access Token Injector Helper with Custom Keys Header Sync
+      function isValidApiKey(val) {
+        if (!val || typeof val !== "string") return false;
+        const trimmed = val.trim();
+        if (!trimmed) return false;
+        if (trimmed.length < 20) return false;
+        if (trimmed.includes("placeholder") || trimmed.includes("your_")) return false;
+        return true;
+      }
+
+      function getAuthHeaders() {
+        const headers = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        };
+        const geminiKey = localStorage.getItem("custom_gemini_key");
+        const openaiKey = localStorage.getItem("custom_openai_key");
+        if (isValidApiKey(geminiKey)) headers["x-gemini-key"] = geminiKey.trim();
+        if (isValidApiKey(openaiKey)) headers["x-openai-key"] = openaiKey.trim();
+        return headers;
+      }
+
+      // Smart Authorization & Token Refresh Interceptor
+      async function fetchWithAuth(url, options = {}) {
+        if (!options.headers) {
+          options.headers = {};
+        }
+        
+        // Merge getAuthHeaders() values into options.headers
+        const authHeaders = getAuthHeaders();
+        options.headers = { ...authHeaders, ...options.headers };
+
+        let res = await fetch(url, options);
+
+        // If the request returns 401 (Not Authorized), try to refresh token automatically
+        if (res.status === 401) {
+          console.warn("[Auth Interceptor] Access token expired. Attempting refresh...");
+          const refreshToken = localStorage.getItem("refreshToken");
+          if (refreshToken) {
+            try {
+              const refreshRes = await fetch("/api/auth/refresh", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ refreshToken })
+              });
+              const refreshData = await refreshRes.json();
+              if (refreshData.success && refreshData.accessToken) {
+                console.log("[Auth Interceptor] Access token refreshed successfully!");
+                localStorage.setItem("accessToken", refreshData.accessToken);
+                
+                // Retry the original request with the new access token
+                options.headers["Authorization"] = `Bearer ${refreshData.accessToken}`;
+                res = await fetch(url, options);
+                
+                if (res.status === 401) {
+                  throw new Error("SESSION_EXPIRED");
+                }
+              } else {
+                throw new Error("SESSION_EXPIRED");
+              }
+            } catch (err) {
+              console.error("[Auth Interceptor] Failed to perform token refresh:", err);
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("refreshToken");
+              alert("Session expired. Please log in again to continue.");
+              window.location.href = "/login.html";
+              throw new Error("SESSION_EXPIRED");
+            }
+          } else {
+            console.error("[Auth Interceptor] No refresh token found in storage. Redirecting to login...");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            alert("Session expired. Please log in again to continue.");
+            window.location.href = "/login.html";
+            throw new Error("SESSION_EXPIRED");
+          }
+        }
+        return res;
+      }
+
+      const canvas = document.getElementById("letter-paper");
+      const scaleContainer = document.getElementById("canvas-scale-container");
+
+      // Customizer slider functions
+      function updateThemeAccent(colorHex) {
+        canvas.style.setProperty("--theme-accent", colorHex);
+        document.getElementById("accent-color-picker").value = colorHex;
+        
+        // Match sender name text color to accent
+        document.getElementById("view-sender-name").style.color = colorHex;
+      }
+
+      function updateThemeFont(fontClass) {
+        canvas.className = canvas.className.replace(/font-\S+/g, "").trim() + " " + fontClass;
+      }
+
+      function updateThemeMargin(marginVal) {
+        canvas.style.setProperty("--canvas-margin", `${marginVal}mm`);
+      }
+
+      function updateThemeFontScale(scaleVal) {
+        canvas.style.setProperty("--canvas-font-size", `${scaleVal}px`);
+      }
+
+      function updateThemeZoom(zoomVal) {
+        scaleContainer.style.transform = `scale(${zoomVal / 100})`;
+        document.getElementById("zoom-value").textContent = `${zoomVal}%`;
+      }
+
+      function changeActiveTemplate(tpl) {
+        canvas.className = canvas.className.replace(/tmpl-\S+/g, "").trim() + " " + tpl;
+      }
+
+      // Input syncing mappings
+      const fieldMappings = {
+        "input-sender-name": ["view-sender-name", "view-signature-name"],
+        "input-sender-role": ["view-sender-role"],
+        "input-sender-location": ["view-sender-location"],
+        "input-sender-phone": ["view-sender-phone"],
+        "input-sender-email": ["view-sender-email"],
+        "input-company-name": ["view-company-name"],
+        "input-recipient-name": ["view-recipient-name", "view-salutation"],
+        "input-recipient-title": ["view-recipient-title"],
+        "input-company-address": ["view-company-address"],
+        "input-job-title": ["view-job-title"],
+        "input-job-id": ["view-job-id"],
+        "input-body-intro": ["view-body-intro"],
+        "input-body-core": ["view-body-core"],
+        "input-body-close": ["view-body-close"],
+        "input-signature": ["view-signature-name"]
+      };
+
+      function syncFields() {
+        Object.keys(fieldMappings).forEach((inputId) => {
+          const el = document.getElementById(inputId);
+          if (!el) return;
+          fieldMappings[inputId].forEach((targetId) => {
+            const targetView = document.getElementById(targetId);
+            if (!targetView) return;
+            
+            if (inputId === "input-sender-location") {
+              targetView.textContent = el.value.trim() ? `📍 ${el.value.trim()}` : "";
+            } else if (inputId === "input-sender-phone") {
+              targetView.textContent = el.value.trim() ? `📞 ${el.value.trim()}` : "";
+            } else if (inputId === "input-sender-email") {
+              targetView.textContent = el.value.trim() ? `✉️ ${el.value.trim()}` : "";
+            } else if (inputId === "input-job-id") {
+              targetView.textContent = el.value.trim() ? `Job ID: ${el.value.trim()}` : "";
+            } else {
+              targetView.textContent = el.value;
+            }
+          });
+        });
+      }
+
+      Object.keys(fieldMappings).forEach((id) => {
+        document.getElementById(id)?.addEventListener("input", syncFields);
+      });
+
+      // AI Generation pipeline
+      async function triggerLetterAIGeneration() {
+        const targetRole = document.getElementById("ai-target-role").value.trim() || "Full Stack Engineer";
+        const targetCo = document.getElementById("ai-target-co").value.trim() || "Niftel Communication";
+        const btn = document.getElementById("ai-letter-btn");
+
+        try {
+          btn.disabled = true;
+          btn.innerHTML = "<span>Processing AI Engine...</span>";
+
+          const res = await fetchWithAuth("/api/resume/generate-ai", {
+            method: "POST",
+            body: JSON.stringify({
+              targetRole: targetRole,
+              company: targetCo,
+            }),
+          });
+          const payload = await res.json();
+
+          if (res.ok && payload.success) {
+            const ai = payload.data;
+            
+            document.getElementById("input-company-name").value = targetCo;
+            document.getElementById("input-job-title").value = targetRole;
+            document.getElementById("input-body-intro").value =
+              `I am writing to express my eager interest in the position of ${targetRole} currently open at ${targetCo}. With a specialized foundation in software engineering, low-latency microservices, and modern database configuration architectures, I am excited to contribute to your core execution vectors.`;
+            document.getElementById("input-body-core").value =
+              ai.summary ||
+              `Throughout my engineering context matrices, I have prioritized deploying high-velocity server frameworks, decoupling complex endpoint controllers, and ensuring elegant responsive interface paints. Joining the strategic teams at ${targetCo} aligns directly with my technical focus.`;
+            document.getElementById("input-body-close").value =
+              `Thank you for your time and strategic review. I look forward to detailing how my technical stack metrics align with the upcoming developmental roadmaps and system benchmarks at ${targetCo}.`;
+            
+            syncFields();
+          } else {
+            alert(payload.error || "AI Generation failed");
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          console.error("AI Generation Error:", err);
+          alert("Network connection error to AI core.");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = "<span>Draft Letter via AI</span>";
+        }
+      }
+
+      // Save Cover Letter
+      async function saveActiveLetter() {
+        const validationAlert = document.getElementById("validation-errors");
+        validationAlert.classList.add("hidden");
+        validationAlert.innerHTML = "";
+
+        // Client validations
+        let errors = [];
+        if (!document.getElementById("input-recipient-name").value.trim()) errors.push("Recipient Name is required");
+        if (!document.getElementById("input-company-name").value.trim()) errors.push("Company Name is required");
+        if (!document.getElementById("input-job-title").value.trim()) errors.push("Job Title is required");
+        if (!document.getElementById("input-body-intro").value.trim()) errors.push("Introductory Hook is required");
+        if (!document.getElementById("input-body-core").value.trim()) errors.push("Core Pitch Stack is required");
+        if (!document.getElementById("input-body-close").value.trim()) errors.push("Closing Intent is required");
+
+        if (errors.length > 0) {
+          validationAlert.innerHTML = `<p class="font-bold">⚠️ Fix Validation Errors:</p>` + errors.map(e => `• ${e}`).join("<br>");
+          validationAlert.classList.remove("hidden");
+          return;
+        }
+
+        const signatureName = document.getElementById("input-signature").value || document.getElementById("input-sender-name").value;
+        const letterPayload = {
+          recipientName: document.getElementById("input-recipient-name").value,
+          recipientTitle: document.getElementById("input-recipient-title").value,
+          company: document.getElementById("input-company-name").value,
+          companyAddress: document.getElementById("input-company-address").value,
+          jobTitle: document.getElementById("input-job-title").value,
+          jobId: document.getElementById("input-job-id").value,
+          opening: document.getElementById("input-body-intro").value,
+          body: document.getElementById("input-body-core").value,
+          closing: document.getElementById("input-body-close").value,
+          signature: signatureName,
+          template: document.getElementById("template-picker").value.replace("tmpl-", ""),
+          status: "draft"
+        };
+
+        const syncDot = document.getElementById("sync-indicator-dot");
+        const syncText = document.getElementById("sync-indicator-text");
+
+        try {
+          syncDot.className = "w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse";
+          syncText.textContent = "SYNCHRONIZING CLOUD...";
+
+          const saveUrl = activeLetterId 
+            ? `/api/cover-letter/${activeLetterId}`
+            : "/api/cover-letter";
+          const saveMethod = activeLetterId ? "PUT" : "POST";
+
+          const res = await fetchWithAuth(saveUrl, {
+            method: saveMethod,
+            body: JSON.stringify(letterPayload),
+          });
+          const outcome = await res.json();
+          if (res.ok && outcome.success) {
+            activeLetterId = outcome.coverLetter._id;
+            syncDot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+            syncText.textContent = "Saved to Cloud Cluster";
+          } else {
+            syncDot.className = "w-1.5 h-1.5 rounded-full bg-rose-500";
+            syncText.textContent = "Sync Mismatch Fault";
+            alert("Database rejected save packet: " + (outcome.error || "Mismatched metadata."));
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          syncDot.className = "w-1.5 h-1.5 rounded-full bg-rose-500";
+          syncText.textContent = "Offline Mode";
+          console.error("Database connection fault:", err);
+          alert("Database connection offline. Preserved locally on browser thread.");
+        }
+      }
+
+      // Load Saved Cover Letters
+      async function loadSavedLetterData() {
+        const syncDot = document.getElementById("sync-indicator-dot");
+        const syncText = document.getElementById("sync-indicator-text");
+        try {
+          syncDot.className = "w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse";
+          syncText.textContent = "Retrieving saved letter...";
+          const res = await fetchWithAuth("/api/cover-letter", {
+            method: "GET"
+          });
+          const payload = await res.json();
+          if (res.ok && payload.success && payload.count > 0) {
+            const model = payload.coverLetters[0];
+            activeLetterId = model._id;
+
+            document.getElementById("input-recipient-name").value = model.recipientName || "";
+            document.getElementById("input-recipient-title").value = model.recipientTitle || "";
+            document.getElementById("input-company-name").value = model.company || "";
+            document.getElementById("input-company-address").value = model.companyAddress || "";
+            document.getElementById("input-job-title").value = model.jobTitle || "";
+            document.getElementById("input-job-id").value = model.jobId || "";
+            document.getElementById("input-body-intro").value = model.opening || "";
+            document.getElementById("input-body-core").value = model.body || "";
+            document.getElementById("input-body-close").value = model.closing || "";
+            document.getElementById("input-signature").value = model.signature || "";
+
+            const cleanTpl = model.template ? `tmpl-${model.template}` : "tmpl-professional";
+            document.getElementById("template-picker").value = cleanTpl;
+            changeActiveTemplate(cleanTpl);
+
+            // Fetch user info from localStorage if signature/sender details are empty
+            const savedUserStr = localStorage.getItem("user");
+            if (savedUserStr) {
+              const u = JSON.parse(savedUserStr);
+              if (!model.signature) {
+                document.getElementById("input-sender-name").value = u.fullName || "Shreya Maurya";
+                document.getElementById("input-signature").value = u.fullName || "Shreya Maurya";
+              }
+              if (u.email) document.getElementById("input-sender-email").value = u.email;
+            }
+
+            syncFields();
+            syncDot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+            syncText.textContent = "Synchronized";
+          } else {
+            // New draft presets
+            const savedUserStr = localStorage.getItem("user");
+            if (savedUserStr) {
+              const u = JSON.parse(savedUserStr);
+              if (u.fullName) {
+                document.getElementById("input-sender-name").value = u.fullName;
+                document.getElementById("input-signature").value = u.fullName;
+              }
+              if (u.email) document.getElementById("input-sender-email").value = u.email;
+            }
+            syncFields();
+            syncDot.className = "w-1.5 h-1.5 rounded-full bg-indigo-500";
+            syncText.textContent = "New Sandbox Draft";
+          }
+        } catch (err) {
+          if (err.message === "SESSION_EXPIRED") return;
+          console.error("Failed to load saved database credentials:", err);
+          syncDot.className = "w-1.5 h-1.5 rounded-full bg-rose-500";
+          syncText.textContent = "Offline Draft Mode";
+          syncFields();
+        }
+      }
+
+      // Export/Download logic with original paddings and dimensions cleared
+      function downloadLetterPDF() {
+        const element = document.getElementById('letter-paper');
+        const fileName = `${document.getElementById('input-sender-name').value || 'CoverLetter'}_Letter.pdf`;
+        
+        if (typeof html2pdf !== 'undefined') {
+          const clonedElement = element.cloneNode(true);
+          
+          clonedElement.style.transform = 'none';
+          clonedElement.style.scale = '1';
+          clonedElement.style.margin = '0';
+          clonedElement.style.border = 'none';
+          clonedElement.style.boxShadow = 'none';
+          clonedElement.style.borderRadius = '0';
+          clonedElement.style.minHeight = '0';
+          clonedElement.style.height = 'auto';
+          clonedElement.style.width = '210mm';
+          
+          const opt = {
+            margin: [0, 0, 0, 0],
+            filename: fileName,
+            image: { type: 'jpeg', quality: 0.99 },
+            html2canvas: { 
+              scale: 2,
+              logging: false,
+              useCORS: true,
+              allowTaint: true
+            },
+            jsPDF: { 
+              orientation: 'portrait', 
+              unit: 'mm', 
+              format: 'a4',
+              compress: true
+            },
+            pagebreak: { mode: 'avoid-all' }
+          };
+          
+          html2pdf()
+            .set(opt)
+            .from(clonedElement)
+            .save()
+            .catch(err => {
+              console.error('PDF generation error:', err);
+              window.print();
+            });
+        } else {
+          alert('Opening print dialog to save as PDF.');
+          window.print();
+        }
+      }
+
+      // Date Auto-Setup
+      document.getElementById("view-date").textContent =
+        new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+
+      // Load data on start
+      window.addEventListener("load", () => {
+        loadSavedLetterData();
+
+        // Fade and remove page loader
+        const loader = document.getElementById("page-loader");
+        if (loader) {
+          loader.classList.add("opacity-0");
+          loader.classList.add("pointer-events-none");
+          setTimeout(() => loader.remove(), 500);
+        }
+      });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  </body>
+</html>

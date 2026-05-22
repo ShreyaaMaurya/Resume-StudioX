@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResumeStudio X | Connect Layer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "brand-dark": "#0f172a" /* slate-900 */,
+              "brand-slate": "#475569" /* slate-600 */,
+              "brand-light": "#f8fafc" /* slate-50 */,
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;600;700;800&display=swap');
+      .font-outfit { font-family: 'Outfit', sans-serif; }
+
+      /* Smooth light scrollbar */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      /* Smooth notification toast transitions */
+      .toast-slide {
+        transition:
+          transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 0.4s ease;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-brand-light text-brand-dark antialiased min-h-screen flex flex-col justify-between"
+  >
+    <!-- Premium Glassmorphic Page Loader -->
+    <div id="page-loader" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-md transition-all duration-500 ease-out opacity-100">
+      <div class="relative flex items-center justify-center">
+        <div class="absolute w-24 h-24 bg-indigo-500/20 rounded-full blur-xl animate-pulse"></div>
+        <div class="w-16 h-16 border-4 border-slate-800 border-t-indigo-500 rounded-full animate-spin"></div>
+      </div>
+      <div class="mt-6 text-center">
+        <h3 class="text-sm font-black tracking-widest text-white uppercase font-outfit">ResumeStudio <span class="text-indigo-500">X</span></h3>
+        <p class="text-[10px] text-slate-400 font-mono mt-1 animate-pulse uppercase tracking-wider">Mounting Design Grid...</p>
+      </div>
+    </div>
+    <!--HEADER-->
+
+    <main class="flex-1 flex items-center justify-center p-6 md:p-12">
+      <div
+        class="w-full max-w-5xl bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-[1fr_1.2fr]"
+      >
+        <div
+          class="bg-brand-light p-8 md:p-12 border-b lg:border-b-0 lg:border-r border-slate-200/80 flex flex-col justify-between space-y-12"
+        >
+          <div class="space-y-4">
+            <span
+              class="text-[10px] font-mono font-bold tracking-widest text-indigo-600 uppercase block"
+              >SECURE METRIC CHANNELS</span
+            >
+            <h1
+              class="text-4xl md:text-5xl font-black tracking-tight text-brand-dark leading-tight"
+            >
+              Connect with our <br />engineering desk.
+            </h1>
+            <p
+              class="text-base md:text-lg text-brand-slate leading-relaxed font-medium max-w-sm"
+            >
+              Have custom deployment parameters, enterprise infrastructure
+              queries, or layout optimization requests? Initiate an inbound
+              signal link.
+            </p>
+          </div>
+
+          <div class="space-y-6 font-medium text-sm">
+            <div class="space-y-1">
+              <p
+                class="text-slate-400 font-mono text-[10px] uppercase tracking-wider"
+              >
+                ELECTRONIC MAIL
+              </p>
+              <p
+                class="text-brand-dark font-bold text-base hover:text-indigo-600 transition cursor-pointer"
+              >
+                support@resumestudio.local
+              </p>
+            </div>
+            <div class="space-y-1">
+              <p
+                class="text-slate-400 font-mono text-[10px] uppercase tracking-wider"
+              >
+                GEOGRAPHIC GRID REGION
+              </p>
+              <p class="text-brand-dark font-bold text-base">
+                Lucknow, Uttar Pradesh, India
+              </p>
+            </div>
+            <div class="space-y-1">
+              <p
+                class="text-slate-400 font-mono text-[10px] uppercase tracking-wider"
+              >
+                RESPONSE VELOCITY
+              </p>
+              <p
+                class="text-brand-dark font-bold text-base flex items-center gap-1.5"
+              >
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> &lt;
+                12 Hours Latency
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-8 md:p-12 flex flex-col justify-center">
+          <form
+            id="contact-secure-form"
+            class="space-y-5"
+            onsubmit="handleFormSubmission(event)"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label
+                  class="block text-[11px] font-bold text-brand-slate uppercase tracking-wide"
+                  >Your Name</label
+                >
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g., Shreya Maurya"
+                  class="w-full bg-brand-light border-2 border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-indigo-600 font-medium transition"
+                />
+              </div>
+              <div class="space-y-1">
+                <label
+                  class="block text-[11px] font-bold text-brand-slate uppercase tracking-wide"
+                  >Email Destination</label
+                >
+                <input
+                  type="email"
+                  required
+                  placeholder="e.g., shreya@domain.local"
+                  class="w-full bg-brand-light border-2 border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-indigo-600 font-medium transition"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <label
+                class="block text-[11px] font-bold text-brand-slate uppercase tracking-wide"
+                >Target Topic / Subject</label
+              >
+              <input
+                type="text"
+                required
+                placeholder="e.g., Custom Server Enterprise Integrations"
+                class="w-full bg-brand-light border-2 border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-indigo-600 font-medium transition"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label
+                class="block text-[11px] font-bold text-brand-slate uppercase tracking-wide"
+                >Message Payload Details</label
+              >
+              <textarea
+                required
+                rows="5"
+                placeholder="State your architectural development specifications or support request variables clearly..."
+                class="w-full bg-brand-light border-2 border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-indigo-600 font-medium transition resize-none"
+              ></textarea>
+            </div>
+
+            <div class="pt-2">
+              <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-sm py-4 rounded-xl transition duration-300 shadow-lg hover:shadow-xl transform active:scale-[0.99]"
+              >
+                Transmit Secure Message Link
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <div
+      id="success-toast"
+      class="toast-slide fixed bottom-6 right-6 bg-slate-900 text-white border border-slate-800 p-4 rounded-xl shadow-xl flex items-center gap-3 opacity-0 translate-y-10 pointer-events-none z-50"
+    >
+      <div
+        class="h-6 w-6 bg-emerald-500 rounded-md flex items-center justify-center text-xs font-bold"
+      >
+        ✓
+      </div>
+      <div class="text-xs">
+        <p class="font-bold">Transmission Dispatched</p>
+        <p class="text-slate-400 font-mono text-[10px] mt-0.5">
+          Packet link status: SECURE_SUCCESS
+        </p>
+      </div>
+    </div>
+
+    <footer
+      class="h-12 flex items-center justify-center border-t border-slate-200/60 bg-white font-mono text-[10px] text-slate-400"
+    >
+      &copy; 2026 RESUMESTUDIO LABS INC. ALL CHANNELS PROTECTED.
+    </footer>
+
+    <script>
+      function handleFormSubmission(event) {
+        event.preventDefault(); // Stop raw page refreshes instantly
+
+        const toast = document.getElementById("success-toast");
+
+        // Slide Toast into viewpoint focus seamlessly
+        toast.classList.remove("opacity-0", "translate-y-10");
+        toast.classList.add("opacity-100", "translate-y-0");
+
+        // Reset native input fields values
+        document.getElementById("contact-secure-form").reset();
+
+        // Retract view notification smoothly after timeout lifecycle ends
+        setTimeout(() => {
+          toast.classList.remove("opacity-100", "translate-y-0");
+          toast.classList.add("opacity-0", "translate-y-10");
+        }, 4000);
+      }
+
+      // Hide loader on window mount completion
+      window.addEventListener("load", () => {
+        const loader = document.getElementById("page-loader");
+        if (loader) {
+          loader.classList.add("opacity-0");
+          loader.classList.add("pointer-events-none");
+          setTimeout(() => loader.remove(), 500);
+        }
+      });
+    </script>
+    <!--FOOTER-->
+  </body>
+</html>
