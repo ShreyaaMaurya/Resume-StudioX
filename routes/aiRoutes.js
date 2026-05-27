@@ -1,39 +1,32 @@
 const express = require('express');
 const router = express.Router();
 
-// Import GeminiService
-let GeminiService;
-let serviceError = null;
+const GeminiService = require('../models/GeminiService');
 
-try {
-  GeminiService = require('../models/GeminiService');
-} catch (e) {
-  serviceError = e;
-  console.error('⚠️  GeminiService import failed:', e.message);
-  console.error('Make sure to run: npm install @google/generative-ai');
-}
+function getGeminiService(req) {
+  const requestKey = req.headers['x-gemini-key'];
 
-// Initialize Gemini Service
-let geminiService;
-try {
-  if (GeminiService) {
-    geminiService = new GeminiService();
-    console.log('✅ Gemini Service initialized successfully');
+  try {
+    return new GeminiService(requestKey || process.env.GEMINI_API_KEY);
+  } catch (error) {
+    console.error('⚠️  GeminiService initialization failed:', error.message);
+    return null;
   }
-} catch (e) {
-  serviceError = e;
-  console.error('⚠️  Gemini Service initialization failed:', e.message);
 }
 
 // Middleware to check if Gemini is available
 const checkGemini = (req, res, next) => {
-  if (!geminiService || serviceError) {
+  const geminiService = getGeminiService(req);
+
+  if (!geminiService) {
     return res.status(503).json({ 
       error: 'Gemini AI service is not available',
-      details: serviceError ? serviceError.message : 'Service not initialized',
-      solution: 'Run: npm install @google/generative-ai'
+      details: 'Provide x-gemini-key in the request or set GEMINI_API_KEY in .env',
+      solution: 'Set a valid Gemini API key in the app settings or .env'
     });
   }
+
+  req.geminiService = geminiService;
   next();
 };
 
@@ -45,7 +38,7 @@ router.post('/summarize-resume', checkGemini, async (req, res) => {
       return res.status(400).json({ error: 'Resume text is required' });
     }
 
-    const summary = await geminiService.summarizeResume(resumeText);
+    const summary = await req.geminiService.summarizeResume(resumeText);
     res.json({ summary });
   } catch (error) {
     console.error('Resume summarization error:', error);
@@ -64,7 +57,7 @@ router.post('/generate-cover-letter', checkGemini, async (req, res) => {
       });
     }
 
-    const coverLetter = await geminiService.generateCoverLetter(
+    const coverLetter = await req.geminiService.generateCoverLetter(
       resumeData, 
       jobDescription, 
       companyName
@@ -84,7 +77,7 @@ router.post('/resume-suggestions', checkGemini, async (req, res) => {
       return res.status(400).json({ error: 'Resume text is required' });
     }
 
-    const suggestions = await geminiService.improveSuggestions(resumeText);
+    const suggestions = await req.geminiService.improveSuggestions(resumeText);
     res.json({ suggestions });
   } catch (error) {
     console.error('Suggestions generation error:', error);
@@ -103,7 +96,7 @@ router.post('/skills-suggestions', checkGemini, async (req, res) => {
       });
     }
 
-    const suggestions = await geminiService.generateSkillsSuggestions(
+    const suggestions = await req.geminiService.generateSkillsSuggestions(
       currentSkills, 
       targetRole
     );
@@ -125,7 +118,7 @@ router.post('/optimize-for-job', checkGemini, async (req, res) => {
       });
     }
 
-    const optimization = await geminiService.optimizeJobDescription(
+    const optimization = await req.geminiService.optimizeJobDescription(
       resumeText, 
       jobDescription
     );

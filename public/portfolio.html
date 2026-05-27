@@ -59,74 +59,74 @@
       }
 
       /* Transitions */
-    .pane-transition {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+      .pane-transition {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
 
-    /* Responsive tweaks */
-    @media (max-width: 1024px) {
-      header {
-        padding: 1rem !important;
+      /* Responsive tweaks */
+      @media (max-width: 1024px) {
+        header {
+          padding: 1rem !important;
+        }
+        header .w-full {
+          flex-direction: column !important;
+          gap: 1rem !important;
+        }
+        header .flex {
+          width: 100% !important;
+          justify-content: center !important;
+        }
+        #preview-frame-container {
+          height: 60vh;
+        }
+        .portfolio-actions {
+          height: auto;
+          padding: 1rem;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          width: 100%;
+        }
+        .portfolio-actions > div {
+          width: 100%;
+        }
+        .portfolio-actions > div:last-child {
+          width: 100%;
+          justify-content: flex-start;
+        }
       }
-      header .w-full {
-        flex-direction: column !important;
-        gap: 1rem !important;
-      }
-      header .flex {
-        width: 100% !important;
-        justify-content: center !important;
-      }
-      #preview-frame-container {
-        height: 60vh;
-      }
-      .portfolio-actions {
-        height: auto;
-        padding: 1rem;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        width: 100%;
-      }
-      .portfolio-actions > div {
-        width: 100%;
-      }
-      .portfolio-actions > div:last-child {
-        width: 100%;
-        justify-content: flex-start;
-      }
-    }
 
-    @media (max-width: 640px) {
-      header {
-        padding: 0.75rem !important;
+      @media (max-width: 640px) {
+        header {
+          padding: 0.75rem !important;
+        }
+        header .w-full {
+          flex-direction: column !important;
+          gap: 0.75rem !important;
+        }
+        header .flex {
+          flex-wrap: wrap !important;
+          width: 100% !important;
+          justify-content: center !important;
+          gap: 0.5rem !important;
+        }
+        header a {
+          padding: 0.75rem 1rem !important;
+          font-size: 0.75rem !important;
+        }
+        #preview-frame-container {
+          height: 55vh;
+          padding: 0.5rem;
+        }
+        .portfolio-actions {
+          align-items: flex-start;
+          width: 100%;
+          padding: 0.75rem !important;
+        }
+        .portfolio-actions button {
+          width: 100%;
+        }
       }
-      header .w-full {
-        flex-direction: column !important;
-        gap: 0.75rem !important;
-      }
-      header .flex {
-        flex-wrap: wrap !important;
-        width: 100% !important;
-        justify-content: center !important;
-        gap: 0.5rem !important;
-      }
-      header a {
-        padding: 0.75rem 1rem !important;
-        font-size: 0.75rem !important;
-      }
-      #preview-frame-container {
-        height: 55vh;
-        padding: 0.5rem;
-      }
-      .portfolio-actions {
-        align-items: flex-start;
-        width: 100%;
-        padding: 0.75rem !important;
-      }
-      .portfolio-actions button {
-        width: 100%;
-      }
-    }
-  </style>
+    </style>
   </head>
 
   <body
@@ -271,6 +271,29 @@
               <label class="text-[10px] font-bold text-slate-300 uppercase"
                 >Select Workspace Resume</label
               >
+
+              <section id="credentials" class="space-y-8 pt-12 scroll-mt-28">
+                <div class="flex items-center gap-4">
+                  <div>
+                    <h2
+                      class="text-2xl font-black tracking-tight text-white font-outfit uppercase"
+                    >
+                      Credentials
+                    </h2>
+                    <div
+                      class="h-1.5 w-16 bg-gradient-to-r ${activeColors.textGrad} rounded-full mt-2"
+                    ></div>
+                  </div>
+                  <div class="flex-1 h-[1px] bg-slate-800/40"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  ${credentialsHtml || '
+                  <p class="text-slate-500 text-xs font-mono">
+                    // No additional credentials loaded.
+                  </p>
+                  '}
+                </div>
+              </section>
               <select
                 id="ai-select-resume"
                 class="w-full bg-[#070a10] border border-slate-800 focus:border-indigo-500 text-slate-200 text-xs px-3.5 py-3 rounded-xl outline-none glow-border font-medium"
@@ -871,6 +894,16 @@
       let activeImageBase64 = "";
       let activePdfBase64 = "";
 
+      function isValidApiKey(val) {
+        if (!val || typeof val !== "string") return false;
+        const trimmed = val.trim();
+        if (!trimmed) return false;
+        if (trimmed.length < 20) return false;
+        if (trimmed.includes("placeholder") || trimmed.includes("your_"))
+          return false;
+        return true;
+      }
+
       // Smart Authorization & Token Refresh Interceptor
       async function fetchWithAuth(url, options = {}) {
         if (!options.headers) {
@@ -885,6 +918,18 @@
           options.headers["Authorization"] =
             `Bearer ${localStorage.getItem("accessToken")}`;
         }
+
+        // Inject custom API keys interchangeably
+        const geminiKey =
+          localStorage.getItem("custom_gemini_key") ||
+          localStorage.getItem("x-gemini-key");
+        const openaiKey =
+          localStorage.getItem("custom_openai_key") ||
+          localStorage.getItem("x-openai-key");
+        if (isValidApiKey(geminiKey))
+          options.headers["x-gemini-key"] = geminiKey.trim();
+        if (isValidApiKey(openaiKey))
+          options.headers["x-openai-key"] = openaiKey.trim();
 
         let res = await fetch(url, options);
 
@@ -1399,11 +1444,6 @@
         try {
           const res = await fetchWithAuth("/api/portfolio/generate", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-gemini-key": localStorage.getItem("x-gemini-key") || "",
-              "x-openai-key": localStorage.getItem("x-openai-key") || "",
-            },
             body: JSON.stringify({
               targetRole: promptVal,
               resumeId: selectVal,
@@ -1412,7 +1452,7 @@
           });
 
           const data = await res.json();
-          if (data.success && data.data) {
+          if (res.ok && data.success && data.data) {
             portfolioState = {
               ...portfolioState,
               ...data.data,
@@ -1425,9 +1465,37 @@
 
             document.getElementById("floating-status").textContent =
               "AI Portfolio layout generated and mounted!";
+
+            if (data.usedRealProvider === false) {
+              console.warn(
+                "[Client] AI Portfolio used local/offline fallback data",
+              );
+              const fallbackContext =
+                data.aiProviderFailureCode === "provider_request_failed"
+                  ? "A configured cloud AI provider failed, so the app switched to the offline adapter."
+                  : "No valid cloud AI key was available, so the app switched to the offline adapter.";
+              const fallbackReason = data.aiProviderFailureReason
+                ? "\n\nReason: " + data.aiProviderFailureReason
+                : "";
+              alert(
+                "Warning: Using Local AI Adapter (Offline Fallback)\n\n" +
+                  "We generated custom tailored portfolio layouts using the offline semantic engine.\n\n" +
+                  fallbackContext +
+                  fallbackReason +
+                  "\n\nOpen Settings to update the browser key if needed. The server .env key will also be used when available.",
+              );
+            }
           } else {
+            console.warn("[Client] ⚠️ AI Generation failed");
+            console.warn("[Client] Response:", data);
             alert(
-              "Generation failed: " + (data.error || "Unknown server block."),
+              "❌ AI Generation Failed\n\n" +
+                (data.error ||
+                  "AI compilation failed. Check API Keys in settings.") +
+                "\n\nTo fix:\n" +
+                "1. Open Settings (⚙️)\n" +
+                "2. Enter a valid Gemini or OpenAI API key\n" +
+                "3. Save and try again",
             );
           }
         } catch (err) {
@@ -1502,6 +1570,110 @@
         let skillsHtml = "";
         let projectsHtml = "";
         let experienceHtml = "";
+        let educationHtml = "";
+        let certificationsHtml = "";
+        let languagesHtml = "";
+        let awardsHtml = "";
+
+        const educationItems = Array.isArray(portfolioState.education)
+          ? portfolioState.education
+          : [];
+        const certificationItems = Array.isArray(portfolioState.certifications)
+          ? portfolioState.certifications
+          : [];
+        const languageItems = Array.isArray(portfolioState.languages)
+          ? portfolioState.languages
+          : typeof portfolioState.languages === "string"
+            ? portfolioState.languages.split(",")
+            : [];
+        const awardItems = Array.isArray(portfolioState.awards)
+          ? portfolioState.awards
+          : [];
+
+        if (educationItems.length > 0) {
+          educationHtml = `
+            <div class="p-6 rounded-2xl bg-slate-900/30 border border-slate-800/80 backdrop-blur-xl hover:border-[var(--primary)]/50 transition-all duration-300">
+              <h3 class="text-xs font-bold uppercase tracking-widest text-[var(--primary)] font-mono mb-4">// Education</h3>
+              <div class="space-y-4">
+                ${educationItems
+                  .map(
+                    (edu) => `
+                      <div class="border-l border-slate-800 pl-4 py-1">
+                        <div class="text-sm font-bold text-white">${edu.institution || "Institution"}</div>
+                        <div class="text-xs text-slate-400 mt-1">${edu.degree || "Degree"}</div>
+                      </div>
+                    `,
+                  )
+                  .join("")}
+              </div>
+            </div>
+          `;
+        }
+
+        if (certificationItems.length > 0) {
+          certificationsHtml = `
+            <div class="p-6 rounded-2xl bg-slate-900/30 border border-slate-800/80 backdrop-blur-xl hover:border-[var(--primary)]/50 transition-all duration-300">
+              <h3 class="text-xs font-bold uppercase tracking-widest text-[var(--primary)] font-mono mb-4">// Certifications</h3>
+              <div class="space-y-3">
+                ${certificationItems
+                  .map(
+                    (cert) => `
+                      <div class="flex items-start justify-between gap-4 border-b border-slate-800/50 pb-3 last:border-b-0 last:pb-0">
+                        <div>
+                          <div class="text-sm font-semibold text-white">${cert.title || "Certification"}</div>
+                          <div class="text-xs text-slate-400 mt-1">${cert.provider || "Provider"}</div>
+                        </div>
+                      </div>
+                    `,
+                  )
+                  .join("")}
+              </div>
+            </div>
+          `;
+        }
+
+        if (languageItems.length > 0) {
+          languagesHtml = `
+            <div class="p-6 rounded-2xl bg-slate-900/30 border border-slate-800/80 backdrop-blur-xl hover:border-[var(--primary)]/50 transition-all duration-300">
+              <h3 class="text-xs font-bold uppercase tracking-widest text-[var(--primary)] font-mono mb-4">// Languages</h3>
+              <div class="flex flex-wrap gap-2">
+                ${languageItems
+                  .map(
+                    (language) => `
+                      <span class="text-xs px-3 py-1.5 rounded-xl font-semibold bg-slate-950/70 border border-slate-800/60 text-slate-300">${language.trim()}</span>
+                    `,
+                  )
+                  .join("")}
+              </div>
+            </div>
+          `;
+        }
+
+        if (awardItems.length > 0) {
+          awardsHtml = `
+            <div class="p-6 rounded-2xl bg-slate-900/30 border border-slate-800/80 backdrop-blur-xl hover:border-[var(--primary)]/50 transition-all duration-300">
+              <h3 class="text-xs font-bold uppercase tracking-widest text-[var(--primary)] font-mono mb-4">// Awards</h3>
+              <ul class="space-y-3 text-sm text-slate-300">
+                ${awardItems
+                  .map(
+                    (award) => `
+                      <li class="flex gap-3"><span class="text-[var(--primary)]">•</span><span>${award}</span></li>
+                    `,
+                  )
+                  .join("")}
+              </ul>
+            </div>
+          `;
+        }
+
+        const credentialsHtml = [
+          educationHtml,
+          certificationsHtml,
+          languagesHtml,
+          awardsHtml,
+        ]
+          .filter(Boolean)
+          .join("");
 
         if (template === "glassmorphic") {
           // Glassmorphic dark compiler
@@ -1931,6 +2103,16 @@
                 </div>
               </section>
 
+              <section id="credentials" class="grid grid-cols-1 md:grid-cols-3 gap-12 pt-8 scroll-mt-28">
+                <div class="md:col-span-1">
+                  <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 font-mono tracking-widest">// CREDENTIALS</h2>
+                  <div class="h-0.5 w-10 bg-[var(--primary)] rounded mt-2"></div>
+                </div>
+                <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  ${credentialsHtml || '<p class="text-slate-400 text-xs font-mono">Loading credentials...</p>'}
+                </div>
+              </section>
+
               <!-- FOOTER -->
               <footer id="contact" class="text-center pt-16 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-slate-400 font-bold font-mono scroll-mt-28">
                 <span>&copy; ${new Date().getFullYear()} ${portfolioState.fullName || "Alex Rivera"} // ALL RIGHTS SECURED</span>
@@ -2041,6 +2223,15 @@
                 </h2>
                 <div class="space-y-2">
                   ${experienceHtml || '<p class="text-slate-500 text-xs font-mono">// Null experience segments compiled.</p>'}
+                </div>
+              </section>
+
+              <section id="credentials" class="space-y-6 pt-6 scroll-mt-28">
+                <h2 class="text-xs font-black tracking-widest text-[#00ffcc] border-b border-[#00ffcc]/20 pb-2 uppercase flex items-center gap-2">
+                  <span class="animate-pulse">&gt;</span> AUXILIARY_CREDENTIALS
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  ${credentialsHtml || '<p class="text-slate-500 text-xs font-mono">// Null credentials records compiled.</p>'}
                 </div>
               </section>
 
@@ -2272,9 +2463,13 @@
 
           // Pop keys
           document.getElementById("dialog-gemini-key").value =
-            localStorage.getItem("x-gemini-key") || "";
+            localStorage.getItem("custom_gemini_key") ||
+            localStorage.getItem("x-gemini-key") ||
+            "";
           document.getElementById("dialog-openai-key").value =
-            localStorage.getItem("x-openai-key") || "";
+            localStorage.getItem("custom_openai_key") ||
+            localStorage.getItem("x-openai-key") ||
+            "";
         } else {
           dialog.classList.remove("flex");
           dialog.classList.add("hidden");
@@ -2291,11 +2486,17 @@
         }
       }
       function saveKeys() {
-        const gemini = document.getElementById("dialog-gemini-key").value;
-        const openai = document.getElementById("dialog-openai-key").value;
+        const gemini = document
+          .getElementById("dialog-gemini-key")
+          .value.trim();
+        const openai = document
+          .getElementById("dialog-openai-key")
+          .value.trim();
 
         localStorage.setItem("x-gemini-key", gemini);
         localStorage.setItem("x-openai-key", openai);
+        localStorage.setItem("custom_gemini_key", gemini);
+        localStorage.setItem("custom_openai_key", openai);
 
         alert("API credentials saved securely in local storage drawer.");
         toggleSettingsDrawer();

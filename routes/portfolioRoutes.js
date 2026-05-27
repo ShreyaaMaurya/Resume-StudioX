@@ -72,8 +72,16 @@ router.post('/', protect, async (req, res, next) => {
 // @access  Private
 router.post('/generate', protect, generatePortfolioData, (req, res) => {
     res.status(200).json({
-        success: true,
-        message: 'Portfolio synthesized successfully by AI engine.',
+        success: true, // Allow client to mount fallback data successfully
+        usedRealProvider: req.aiUsedRealProvider || false,
+        hasConfiguredProvider: req.aiHasConfiguredProvider || false,
+        aiProviderUsed: req.aiProviderUsed || null,
+        aiProviderKeySource: req.aiProviderKeySource || null,
+        aiProviderFailureCode: req.aiProviderFailureCode || null,
+        aiProviderFailureReason: req.aiProviderFailureReason || null,
+        message: req.aiUsedRealProvider 
+            ? 'Portfolio synthesized successfully by AI engine.' 
+            : 'AI synthesis failed, fell back to template data.',
         data: req.aiGeneratedPortfolio
     });
 });

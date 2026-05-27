@@ -1,38 +1,88 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
+const GEMINI_MODEL_FALLBACKS = [
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite',
+  'gemini-1.5-flash',
+  'gemini-1.5-pro',
+  'gemini-pro'
+];
+
+function normalizeApiKey(rawVal) {
+  if (!rawVal || typeof rawVal !== 'string') {
+    return null;
+  }
+
+  const trimmed = rawVal.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  if (
+    trimmed === 'null' ||
+    trimmed === 'undefined' ||
+    trimmed === 'your_gemini_api_key_here' ||
+    trimmed.includes('placeholder') ||
+    trimmed.length <= 15
+  ) {
+    return null;
+  }
+
+  return trimmed;
+}
+
 class GeminiService {
-  constructor() {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      throw new Error('GEMINI_API_KEY is not defined in environment variables. Add it to your .env file.');
+  constructor(apiKey = process.env.GEMINI_API_KEY) {
+    const normalizedKey = normalizeApiKey(apiKey);
+    if (!normalizedKey) {
+      throw new Error('GEMINI_API_KEY is not defined in environment variables or request headers. Add it to your .env file or send x-gemini-key.');
     }
-    if (apiKey === 'your_gemini_api_key_here') {
-      throw new Error('GEMINI_API_KEY is set to placeholder. Please set a real API key in .env');
-    }
-    this.client = new GoogleGenerativeAI(apiKey);
+
+    this.apiKey = normalizedKey;
+    this.client = new GoogleGenerativeAI(normalizedKey);
   }
 
   async generateText(prompt, maxTokens = 1000) {
-    try {
-      const model = this.client.getGenerativeModel({ model: 'gemini-pro' });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      return response.text();
-    } catch (error) {
-      console.error('Gemini API Error:', error);
-      
-      if (error.message.includes('API key')) {
-        throw new Error('Invalid or missing API key. Check your GEMINI_API_KEY in .env');
+    let lastError = null;
+
+    for (const modelName of GEMINI_MODEL_FALLBACKS) {
+      try {
+        const model = this.client.getGenerativeModel({ model: modelName });
+        const result = await model.generateContent({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: { maxOutputTokens: maxTokens }
+        });
+        const response = await result.response;
+        const text = response.text();
+        if (text && text.trim()) {
+          return text;
+        }
+      } catch (error) {
+        lastError = error;
+        const errorMessage = error?.message || String(error);
+        const modelUnavailable = /not found|not available|404|model/i.test(errorMessage);
+
+        if (!modelUnavailable) {
+          console.error('Gemini API Error:', error);
+
+          if (errorMessage.includes('API key')) {
+            throw new Error('Invalid or missing API key. Check your GEMINI_API_KEY or x-gemini-key.');
+          }
+          if (errorMessage.includes('PERMISSION_DENIED')) {
+            throw new Error('Permission denied. Enable Gemini API at https://console.cloud.google.com/apis');
+          }
+          if (errorMessage.includes('RESOURCE_EXHAUSTED')) {
+            throw new Error('API rate limit exceeded. Please try again later.');
+          }
+
+          throw new Error(`Gemini API Error: ${errorMessage}`);
+        }
       }
-      if (error.message.includes('PERMISSION_DENIED')) {
-        throw new Error('Permission denied. Enable Gemini API at https://console.cloud.google.com/apis');
-      }
-      if (error.message.includes('RESOURCE_EXHAUSTED')) {
-        throw new Error('API rate limit exceeded. Please try again later.');
-      }
-      
-      throw new Error(`Gemini API Error: ${error.message}`);
     }
+
+    throw new Error(`Gemini API Error: ${lastError?.message || 'No supported Gemini model responded.'}`);
   }
 
   async summarizeResume(resumeText) {

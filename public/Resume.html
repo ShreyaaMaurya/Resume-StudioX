@@ -794,7 +794,7 @@
               onclick="toggleAITab('prompt')"
               class="flex-1 py-1.5 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition cursor-pointer"
             >
-              Prompt Role
+              ATS Rewrite
             </button>
             <button
               type="button"
@@ -819,8 +819,47 @@
             <input
               type="text"
               id="ai-input-title"
-              placeholder="e.g., Senior Full Stack Engineer"
+              placeholder="Target job role, e.g. Senior Full Stack Engineer"
               class="w-full bg-slate-950/70 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-indigo-500 transition"
+            />
+            <textarea
+              id="ai-input-resume-text"
+              placeholder="Paste your old resume text here so AI can rewrite the existing resume for the target job"
+              class="w-full bg-slate-950/70 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-indigo-500 transition h-32 resize-none"
+            ></textarea>
+            <textarea
+              id="ai-input-job-context"
+              placeholder="Paste job description, must-have keywords, or recruiter notes"
+              class="w-full bg-slate-950/70 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-indigo-500 transition h-24 resize-none"
+            ></textarea>
+            <div
+              onclick="triggerAISourceSelect()"
+              class="border border-slate-800 hover:border-indigo-500/40 rounded-xl px-3.5 py-3 cursor-pointer hover:bg-indigo-950/10 transition space-y-1.5"
+            >
+              <div class="flex items-center justify-between gap-3">
+                <span class="text-[10px] font-bold text-slate-300"
+                  >Attach current resume source</span
+                >
+                <span class="text-[9px] text-slate-500"
+                  >Optional PDF or image</span
+                >
+              </div>
+              <p class="text-[9px] text-slate-500 leading-relaxed">
+                Attach your current resume so AI can pull more sections and
+                rewrite the full document for ATS.
+              </p>
+              <span
+                id="ai-upload-source-filename"
+                class="text-[10px] text-indigo-400 font-semibold truncate max-w-full hidden"
+                >No file chosen</span
+              >
+            </div>
+            <input
+              type="file"
+              id="ai-source-file-input"
+              accept="application/pdf,image/*"
+              class="hidden"
+              onchange="handleAISourceSelected(this)"
             />
           </div>
 
@@ -895,7 +934,7 @@
             onclick="triggerResumeAIGeneration()"
             class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-xs py-3 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <span>Build Layout via AI</span>
+            <span>Generate ATS Resume</span>
           </button>
         </div>
 
@@ -1629,6 +1668,168 @@
         blockRegistry = blockRegistry.filter((item) => item.id !== id);
       }
 
+      function normalizeAIBlockBullets(bullets) {
+        if (Array.isArray(bullets)) {
+          return bullets
+            .map((item) => (typeof item === "string" ? item.trim() : ""))
+            .filter(Boolean);
+        }
+        if (typeof bullets === "string") {
+          return bullets
+            .split(/\r?\n+/)
+            .map((item) => item.replace(/^[•*-]\s*/, "").trim())
+            .filter(Boolean);
+        }
+        return [];
+      }
+
+      function clearResumeBuilderBlocks() {
+        document.getElementById("dynamic-inputs").innerHTML = "";
+        document.getElementById("preview-blocks-container").innerHTML = "";
+        blockRegistry = [];
+      }
+
+      function applyAIBasics(ai, fallbackRole) {
+        const basics = ai?.basics || {};
+
+        if (typeof basics.fullName === "string" && basics.fullName.trim()) {
+          masterName.value = basics.fullName.trim();
+          viewName.textContent = basics.fullName.trim();
+        }
+
+        const resolvedRole =
+          (typeof basics.targetRole === "string" && basics.targetRole.trim()) ||
+          fallbackRole ||
+          "";
+        if (resolvedRole) {
+          masterRole.value = resolvedRole;
+          viewRole.textContent = resolvedRole;
+        }
+
+        if (typeof basics.email === "string" && basics.email.trim()) {
+          masterEmail.value = basics.email.trim();
+        }
+        if (typeof basics.phone === "string" && basics.phone.trim()) {
+          masterPhone.value = basics.phone.trim();
+        }
+        if (typeof basics.location === "string" && basics.location.trim()) {
+          masterLocation.value = basics.location.trim();
+        }
+        if (typeof basics.website === "string" && basics.website.trim()) {
+          masterWebsite.value = basics.website.trim();
+        }
+
+        compileHeaderMetadata();
+      }
+
+      function mountAIBlocks(ai, fallbackRole) {
+        const validTypes = new Set([
+          "summary",
+          "experience",
+          "project",
+          "skills",
+          "education",
+          "language",
+          "certification",
+          "award",
+        ]);
+        const blocks = Array.isArray(ai?.blocks) ? ai.blocks : [];
+
+        if (blocks.length > 0) {
+          blocks.forEach((block) => {
+            const type = (block.type || block.blockType || "").toLowerCase();
+            if (!validTypes.has(type)) return;
+
+            const val1 =
+              typeof block.val1 === "string" ? block.val1.trim() : "";
+            const val2 =
+              typeof block.val2 === "string" ? block.val2.trim() : "";
+            const bulletString = normalizeAIBlockBullets(block.bullets).join(
+              "\n",
+            );
+
+            addBlock(type, val1, val2, bulletString);
+          });
+
+          if (!blocks.some((block) => block.type === "summary")) {
+            const summaryText =
+              typeof ai.summary === "string" ? ai.summary.trim() : "";
+            if (summaryText) addBlock("summary", summaryText);
+          }
+          return;
+        }
+
+        const resolvedRole =
+          fallbackRole ||
+          ai.experience?.role ||
+          ai.basics?.targetRole ||
+          "Software Engineer";
+
+        if (ai.summary) addBlock("summary", ai.summary);
+        if (ai.experience) {
+          addBlock(
+            "experience",
+            ai.experience.company || "Example Corp",
+            ai.experience.role || resolvedRole,
+            ai.experience.bullets || "",
+          );
+        }
+        if (ai.skills) addBlock("skills", ai.skills);
+        if (ai.education) {
+          addBlock(
+            "education",
+            ai.education.institution || "University",
+            ai.education.degree || "Degree",
+          );
+        }
+        if (ai.languages) addBlock("language", ai.languages);
+        if (ai.certifications) {
+          addBlock(
+            "certification",
+            ai.certifications.title,
+            ai.certifications.provider,
+          );
+        }
+        if (Array.isArray(ai.awards) && ai.awards.length > 0) {
+          addBlock("award", "", "", ai.awards.join("\n"));
+        }
+      }
+
+      function buildResumeBlocksPayload() {
+        return blockRegistry.map((b) => ({
+          blockType:
+            b.type === "certification"
+              ? "certification"
+              : b.type === "award"
+                ? "award"
+                : b.type,
+          val1:
+            document.getElementById(`input-v1-${b.id}`)?.value ||
+            document.getElementById(`input-field-${b.id}`)?.value ||
+            "",
+          val2: document.getElementById(`input-v2-${b.id}`)?.value || "",
+          bullets:
+            document.getElementById(`input-bullets-${b.id}`)?.value || "",
+        }));
+      }
+
+      function buildCurrentResumeSnapshot() {
+        return {
+          fullName: masterName.value.trim(),
+          targetRole: masterRole.value.trim(),
+          email: masterEmail.value.trim(),
+          phone: masterPhone.value.trim(),
+          location: masterLocation.value.trim(),
+          website: masterWebsite.value.trim(),
+          summary: blockRegistry.find((b) => b.type === "summary")
+            ? document.getElementById(
+                `input-field-${blockRegistry.find((b) => b.type === "summary").id}`,
+              )?.value || ""
+            : "",
+          blocks: buildResumeBlocksPayload(),
+        };
+      }
+
       /* ------------------------------------------------------------------ */
       /* CONNECTIVITY GATEWAYS ASYNC PIPELINES DIRECT CLOUD SYNC            */
       /* ------------------------------------------------------------------ */
@@ -1653,8 +1854,12 @@
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         };
-        const geminiKey = localStorage.getItem("custom_gemini_key");
-        const openaiKey = localStorage.getItem("custom_openai_key");
+        const geminiKey =
+          localStorage.getItem("custom_gemini_key") ||
+          localStorage.getItem("x-gemini-key");
+        const openaiKey =
+          localStorage.getItem("custom_openai_key") ||
+          localStorage.getItem("x-openai-key");
         if (isValidApiKey(geminiKey))
           headers["x-gemini-key"] = geminiKey.trim();
         if (isValidApiKey(openaiKey))
@@ -1750,6 +1955,8 @@
           .value.trim();
         localStorage.setItem("custom_gemini_key", geminiVal);
         localStorage.setItem("custom_openai_key", openaiVal);
+        localStorage.setItem("x-gemini-key", geminiVal);
+        localStorage.setItem("x-openai-key", openaiVal);
 
         const btn = document.querySelector(
           "#api-settings-drawer button[onclick='saveAPIEngineKeys()']",
@@ -1770,8 +1977,14 @@
       }
 
       function loadAPIEngineKeys() {
-        const geminiVal = localStorage.getItem("custom_gemini_key") || "";
-        const openaiVal = localStorage.getItem("custom_openai_key") || "";
+        const geminiVal =
+          localStorage.getItem("custom_gemini_key") ||
+          localStorage.getItem("x-gemini-key") ||
+          "";
+        const openaiVal =
+          localStorage.getItem("custom_openai_key") ||
+          localStorage.getItem("x-openai-key") ||
+          "";
         const gInput = document.getElementById("custom-gemini-key");
         const oInput = document.getElementById("custom-openai-key");
         if (gInput) gInput.value = geminiVal;
@@ -1806,18 +2019,45 @@
           tabPrompt.className =
             "flex-1 py-1.5 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition cursor-pointer";
           viewPrompt.classList.remove("hidden");
-          dispatchBtn.innerHTML = `<span>Build Layout via AI</span>`;
+          dispatchBtn.innerHTML = `<span>Generate ATS Resume</span>`;
         } else if (tab === "photo") {
           tabPhoto.className =
             "flex-1 py-1.5 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition cursor-pointer";
           viewPhoto.classList.remove("hidden");
-          dispatchBtn.innerHTML = `<span>Blueprint Photo via AI</span>`;
+          dispatchBtn.innerHTML = `<span>Rewrite from Photo</span>`;
         } else if (tab === "pdf") {
           tabPdf.className =
             "flex-1 py-1.5 text-center font-bold border-b-2 border-indigo-500 text-indigo-400 transition cursor-pointer";
           viewPdf.classList.remove("hidden");
-          dispatchBtn.innerHTML = `<span>Blueprint PDF via AI</span>`;
+          dispatchBtn.innerHTML = `<span>Rewrite from PDF</span>`;
         }
+      }
+
+      function updateAIAttachedFileLabels(fileName) {
+        [
+          "ai-upload-source-filename",
+          "ai-upload-pdf-filename",
+          "ai-upload-filename",
+        ].forEach((id) => {
+          const label = document.getElementById(id);
+          if (!label) return;
+          label.textContent = `Attached: ${fileName}`;
+          label.classList.remove("hidden");
+        });
+      }
+
+      function triggerAISourceSelect() {
+        document.getElementById("ai-source-file-input").click();
+      }
+
+      function handleAISourceSelected(input) {
+        if (!input.files || input.files.length === 0) return;
+        const file = input.files[0];
+        if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+          processAIPdfFile(file);
+          return;
+        }
+        processAIImageFile(file);
       }
 
       // Drag and Drop PDF File Handlers
@@ -1871,11 +2111,7 @@
         const reader = new FileReader();
         reader.onload = function (e) {
           selectedAIBase64Image = e.target.result;
-          const label = document.getElementById("ai-upload-pdf-filename");
-          if (label) {
-            label.textContent = `Attached: ${file.name}`;
-            label.classList.remove("hidden");
-          }
+          updateAIAttachedFileLabels(file.name);
         };
         reader.readAsDataURL(file);
       }
@@ -1933,11 +2169,7 @@
         const reader = new FileReader();
         reader.onload = function (e) {
           selectedAIBase64Image = e.target.result;
-          const label = document.getElementById("ai-upload-filename");
-          if (label) {
-            label.textContent = `Attached: ${file.name}`;
-            label.classList.remove("hidden");
-          }
+          updateAIAttachedFileLabels(file.name);
         };
         reader.readAsDataURL(file);
       }
@@ -1945,9 +2177,23 @@
       // Advanced Multimodal / Role AI Dispatcher
       async function triggerResumeAIGeneration() {
         const niche = document.getElementById("ai-input-title").value.trim();
+        const pastedResumeText = document
+          .getElementById("ai-input-resume-text")
+          .value.trim();
+        const jobContext = document
+          .getElementById("ai-input-job-context")
+          .value.trim();
         const btn = document.getElementById("ai-dispatch-btn");
 
-        const payload = {};
+        const payload = {
+          resumeData: buildCurrentResumeSnapshot(),
+        };
+        if (pastedResumeText) {
+          payload.resumeText = pastedResumeText;
+        }
+        if (jobContext) {
+          payload.jobDescription = jobContext;
+        }
         if (activeAITab === "photo" || activeAITab === "pdf") {
           if (!selectedAIBase64Image) {
             alert(
@@ -1964,7 +2210,21 @@
             );
             return;
           }
+          if (
+            !pastedResumeText &&
+            !selectedAIBase64Image &&
+            !payload.resumeData.blocks.length &&
+            !payload.resumeData.summary
+          ) {
+            alert(
+              "Paste your old resume, attach a resume file, or add resume sections in the builder before running ATS rewrite.",
+            );
+            return;
+          }
           payload.targetRole = niche;
+          if (selectedAIBase64Image) {
+            payload.resumeImage = selectedAIBase64Image;
+          }
         }
 
         try {
@@ -1976,81 +2236,69 @@
             body: JSON.stringify(payload),
           });
           const outcome = await res.json();
-          
-          // Check if real AI provider was used
-          if (outcome.usedRealProvider === false) {
-            console.warn("[Client] ⚠️ AI Generation used fallback data (not real AI)");
-            console.warn("[Client] Response:", outcome);
-            alert(
-              "❌ AI Generation Failed\n\n" +
-              "Your Gemini/OpenAI API key didn't work. Using template data instead.\n\n" +
-              "To fix:\n" +
-              "1. Open Settings (⚙️)\n" +
-              "2. Enter a valid Gemini or OpenAI API key\n" +
-              "3. Save and try again"
-            );
-            return;
-          }
-          
-          if (res.ok && outcome.success && outcome.usedRealProvider === true) {
+
+          if (res.ok && outcome.success) {
             const ai = outcome.data;
-            console.log("[Client] ✅ Using real AI-generated content");
-            document.getElementById("dynamic-inputs").innerHTML = "";
-            document.getElementById("preview-blocks-container").innerHTML = "";
-            blockRegistry = [];
+            console.log("[Client] ✅ Using AI / fallback generated content");
+            clearResumeBuilderBlocks();
 
             const finalRole =
-              niche || ai.experience?.role || "Software Engineer";
-            masterRole.value = finalRole;
-            viewRole.textContent = finalRole;
-
-            if (ai.summary) addBlock("summary", ai.summary);
-            if (ai.experience) {
-              addBlock(
-                "experience",
-                ai.experience.company || "Example Corp",
-                ai.experience.role || finalRole,
-                ai.experience.bullets || "",
-              );
-            }
-            if (ai.skills) addBlock("skills", ai.skills);
-            if (ai.education) {
-              addBlock(
-                "education",
-                ai.education.institution || "University",
-                ai.education.degree || "Degree",
-              );
-            }
-            if (ai.certifications) {
-              addBlock(
-                "certification",
-                ai.certifications.title,
-                ai.certifications.provider,
-              );
-            }
+              ai?.basics?.targetRole ||
+              niche ||
+              ai.experience?.role ||
+              "Software Engineer";
+            applyAIBasics(ai, finalRole);
+            mountAIBlocks(ai, finalRole);
+            document.getElementById("template-picker").value = "tmpl-ats-clean";
+            changeActiveTemplate("tmpl-ats-clean");
             compileHeaderMetadata();
+
+            if (outcome.usedRealProvider === false) {
+              console.warn("[Client] AI Generation used offline fallback data");
+              const fallbackContext =
+                outcome.aiProviderFailureCode === "provider_quota_exceeded"
+                  ? "Your configured cloud AI provider quota is exhausted, so the app switched to the offline adapter."
+                  : outcome.aiProviderFailureCode === "provider_request_failed"
+                  ? "A configured cloud AI provider failed, so the app switched to the offline adapter."
+                  : "No valid cloud AI key was available, so the app switched to the offline adapter.";
+              const fallbackReason = outcome.aiProviderFailureReason
+                ? "\n\nReason: " + outcome.aiProviderFailureReason
+                : "";
+              alert(
+                "Warning: Using Local AI Adapter (Offline Fallback)\n\n" +
+                  'We generated custom tailored layout data for "' +
+                  finalRole +
+                  '" using the offline semantic engine.\n\n' +
+                  fallbackContext +
+                  fallbackReason +
+                  "\n\nOpen Settings to update the browser key if needed. The server .env key will also be used when available.",
+              );
+            }
           } else {
             alert(
               "❌ AI Generation Error\n\n" +
-              (outcome.error || "AI Synthesis failed. Check API Keys in settings.") +
-              "\n\nMake sure:\n" +
-              "1. API key is entered in Settings\n" +
-              "2. Gemini Multimodal is enabled\n" +
-              "3. Image/PDF is uploaded (if using photo/PDF tab)"
+                (outcome.error ||
+                  "AI Synthesis failed. Check API Keys in settings.") +
+                "\n\nMake sure:\n" +
+                "1. API key is entered in Settings\n" +
+                "2. Gemini Multimodal is enabled\n" +
+                "3. Image/PDF is uploaded (if using photo/PDF tab)",
             );
           }
         } catch (err) {
           if (err.message === "SESSION_EXPIRED") return;
           console.error("AI Generation Error:", err);
-          alert("❌ Network Error\n\nCannot reach AI service. Check your internet connection and try again.");
+          alert(
+            "❌ Network Error\n\nCannot reach AI service. Check your internet connection and try again.",
+          );
         } finally {
           btn.disabled = false;
           btn.innerHTML =
             activeAITab === "photo"
-              ? "<span>Blueprint Photo via AI</span>"
+              ? "<span>Rewrite from Photo</span>"
               : activeAITab === "pdf"
-                ? "<span>Blueprint PDF via AI</span>"
-                : "<span>Build Layout via AI</span>";
+                ? "<span>Rewrite from PDF</span>"
+                : "<span>Generate ATS Resume</span>";
         }
       }
 
@@ -2108,6 +2356,7 @@
             body: JSON.stringify({
               targetRole: target,
               resumeData: resumePayload,
+              useLiveAI: false,
             }),
           });
           const payload = await res.json();
@@ -2183,7 +2432,7 @@
 
           const res = await fetchWithAuth("/api/resume/ats-keywords", {
             method: "POST",
-            body: JSON.stringify({ targetRole: niche }),
+            body: JSON.stringify({ targetRole: niche, useLiveAI: false }),
           });
           const payload = await res.json();
 

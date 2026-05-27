@@ -10,8 +10,13 @@ const { simulateAIExtension, generateATSKeywords, checkATSScore } = require('../
 // @access  Private
 router.post('/generate-ai', protect, simulateAIExtension, (req, res) => {
     res.status(200).json({
-        success: req.aiUsedRealProvider === true, // Only success if real AI was used
+        success: true, // Allow client to mount fallback data successfully
         usedRealProvider: req.aiUsedRealProvider || false,
+        hasConfiguredProvider: req.aiHasConfiguredProvider || false,
+        aiProviderUsed: req.aiProviderUsed || null,
+        aiProviderKeySource: req.aiProviderKeySource || null,
+        aiProviderFailureCode: req.aiProviderFailureCode || null,
+        aiProviderFailureReason: req.aiProviderFailureReason || null,
         data: req.aiGeneratedPayload
     });
 });

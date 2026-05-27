@@ -17,11 +17,16 @@
             },
             animation: {
               'marquee': 'marquee 25s linear infinite',
+              'marquee-reverse': 'marquee-reverse 25s linear infinite',
             },
             keyframes: {
               marquee: {
                 '0%': { transform: 'translateX(0%)' },
                 '100%': { transform: 'translateX(-50%)' },
+              },
+              'marquee-reverse': {
+                '0%': { transform: 'translateX(-50%)' },
+                '100%': { transform: 'translateX(0%)' },
               }
             }
           },
@@ -459,6 +464,157 @@
           <span class="text-[10px] font-mono tracking-widest text-indigo-600 dark:text-indigo-400 font-bold uppercase">TEMPLATE DRAFT TIERS</span>
           <h2 class="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight font-outfit">Showcase Design Gallery</h2>
           <p class="max-w-xl mx-auto text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Browse our 8 custom design frameworks designed to scale from modern startups to elite corporate firms.</p>
+        </div>
+
+        <!-- Stylish Template Previews Marquee Showcase -->
+        <div class="space-y-10 w-full overflow-hidden relative py-6 bg-slate-50/50 dark:bg-slate-950/20 rounded-3xl border border-slate-100 dark:border-slate-800/80 p-6 shadow-inner">
+          <div class="text-center mb-4">
+            <span class="text-[9px] font-mono font-bold tracking-widest text-slate-400 uppercase">// CONTINUOUS VISUAL COMPILER //</span>
+          </div>
+
+          <!-- First Row: Left to Right (Reverse Marquee) -->
+          <div class="marquee-container flex gap-8 w-full">
+            <div class="flex items-center gap-8 animate-marquee-reverse shrink-0">
+              <!-- Walton -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_walton.png" alt="Walton Executive" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">Walton Executive</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">01 / WALTON PHOTO</p>
+                </div>
+              </div>
+              <!-- Classic -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_classic.png" alt="Minimal Classic" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">Minimal Classic</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">03 / CLASSIC GRID</p>
+                </div>
+              </div>
+              <!-- ATS Clean -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_ats.png" alt="ATS Clean" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">ATS Clean Serif</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">05 / ATS CLEAN</p>
+                </div>
+              </div>
+              <!-- ATS Modern -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_modern.png" alt="ATS Modern" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">ATS Modern Slate</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">07 / ATS MODERN</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-8 animate-marquee-reverse shrink-0" aria-hidden="true">
+              <!-- Replicated Walton -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_walton.png" alt="Walton Executive" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">Walton Executive</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">01 / WALTON PHOTO</p>
+                </div>
+              </div>
+              <!-- Replicated Classic -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_classic.png" alt="Minimal Classic" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">Minimal Classic</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">03 / CLASSIC GRID</p>
+                </div>
+              </div>
+              <!-- Replicated ATS Clean -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_ats.png" alt="ATS Clean" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">ATS Clean Serif</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">05 / ATS CLEAN</p>
+                </div>
+              </div>
+              <!-- Replicated ATS Modern -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_modern.png" alt="ATS Modern" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">ATS Modern Slate</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">07 / ATS MODERN</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Second Row: Right to Left (Normal Marquee) -->
+          <div class="marquee-container flex gap-8 w-full">
+            <div class="flex items-center gap-8 animate-marquee shrink-0">
+              <!-- ATS Modern -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_modern.png" alt="ATS Modern" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">ATS Modern Slate</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">07 / ATS MODERN</p>
+                </div>
+              </div>
+              <!-- ATS Clean -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_ats.png" alt="ATS Clean" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">ATS Clean Serif</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">05 / ATS CLEAN</p>
+                </div>
+              </div>
+              <!-- Classic -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_classic.png" alt="Minimal Classic" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">Minimal Classic</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">03 / CLASSIC GRID</p>
+                </div>
+              </div>
+              <!-- Walton -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_walton.png" alt="Walton Executive" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">Walton Executive</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">01 / WALTON PHOTO</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-8 animate-marquee shrink-0" aria-hidden="true">
+              <!-- Replicated ATS Modern -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_modern.png" alt="ATS Modern" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">ATS Modern Slate</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">07 / ATS MODERN</p>
+                </div>
+              </div>
+              <!-- Replicated ATS Clean -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_ats.png" alt="ATS Clean" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">ATS Clean Serif</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">05 / ATS CLEAN</p>
+                </div>
+              </div>
+              <!-- Replicated Classic -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_classic.png" alt="Minimal Classic" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">Minimal Classic</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">03 / CLASSIC GRID</p>
+                </div>
+              </div>
+              <!-- Replicated Walton -->
+              <div class="w-64 h-80 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-2xl p-2.5 shadow-md hover:shadow-2xl hover:border-indigo-500/40 transition duration-300 relative overflow-hidden group">
+                <img src="images/template_walton.png" alt="Walton Executive" class="w-full h-full object-cover rounded-xl transition duration-500 group-hover:scale-[1.03]" />
+                <div class="absolute inset-x-2.5 bottom-2.5 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-800 text-left">
+                  <h5 class="text-xs font-bold text-white font-outfit">Walton Executive</h5>
+                  <p class="text-[8px] text-indigo-400 font-mono mt-0.5">01 / WALTON PHOTO</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Interactive Grid Showcase -->
